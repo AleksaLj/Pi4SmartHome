@@ -14,7 +14,7 @@ namespace AdminManagementDSL.AdminDSL.Common.Core
 
         public override string ToString()
         {
-            return $"Token {TokenType}, {TokenValue}";
+            return $"{TokenValue}";
         }
     }
 }

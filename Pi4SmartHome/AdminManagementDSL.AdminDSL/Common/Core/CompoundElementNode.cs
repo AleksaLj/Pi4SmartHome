@@ -12,6 +12,11 @@ namespace AdminManagementDSL.AdminDSL.Common.Core
             TableElementNodes = new List<AST>();
         }
 
+        public CompoundElementNode(List<AST> tableElementNodes)
+        {
+            TableElementNodes = tableElementNodes;
+        }
+
         public override DataTable Accept(INodeVisitor visitor)
         {
             return visitor.Visit(this);
