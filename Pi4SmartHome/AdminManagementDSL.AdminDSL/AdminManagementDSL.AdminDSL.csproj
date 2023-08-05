@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interpreter\Visitor\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Pi4SmartHome.Core\Pi4SmartHome.Core.csproj" />
   </ItemGroup>
 

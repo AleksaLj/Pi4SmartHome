@@ -1,10 +1,10 @@
 ﻿using AdminManagementDSL.AdminDSL.Common.Core;
-using System.Data;
+using AdminManagementDSL.AdminDSL.Common.Dto;
 
 namespace AdminManagementDSL.AdminDSL.Common.Interfaces
 {
     public interface INodeVisitor
     {
-        DataTable Visit(AST node);
+        Task Visit(AST node, List<SqlTableDto> sqlTablesDto);
     }
 }

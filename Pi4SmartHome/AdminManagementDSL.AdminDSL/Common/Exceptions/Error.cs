@@ -16,6 +16,7 @@ namespace AdminManagementDSL.AdminDSL.Common.Exceptions
             public const string Cd_EmptyPropertyType = "Argument exception [Empty property type]!";
             public const string Cd_EmptyPropertyValue = "Argument exception [Empty property value]!";
             public const string Cd_InvalidPropertyValue = "Invalid property value!";
+            public const string Cd_NonexistentVisitMethod = "Invalid Visitor method!";
         }
 
         public static class ErrorMessages
@@ -31,6 +32,7 @@ namespace AdminManagementDSL.AdminDSL.Common.Exceptions
             public static AdminDSLException EmptyPropertyTypeErr() => new EmptyPropertyTypeException();
             public static AdminDSLException EmptyPropertyValueErr() => new EmptyPropertyValueException();
             public static AdminDSLException InvalidPropertyValueErr() => new InvalidPropertyValueException();
+            public static AdminDSLException NonexistentVisitorMethodErr() => new NonexistentVisitorMethodException();
         }
     }
 }

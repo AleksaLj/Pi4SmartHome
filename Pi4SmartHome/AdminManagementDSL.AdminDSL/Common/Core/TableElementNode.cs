@@ -1,5 +1,5 @@
-﻿using AdminManagementDSL.AdminDSL.Common.Interfaces;
-using System.Data;
+﻿using AdminManagementDSL.AdminDSL.Common.Dto;
+using AdminManagementDSL.AdminDSL.Common.Interfaces;
 
 namespace AdminManagementDSL.AdminDSL.Common.Core
 {
@@ -23,9 +23,7 @@ namespace AdminManagementDSL.AdminDSL.Common.Core
             PropertyNodes = propertyNodes;
         }
 
-        public override DataTable Accept(INodeVisitor visitor)
-        {
-            return visitor.Visit(this);
-        }
+        public override async Task Accept(INodeVisitor visitor, 
+                                          List<SqlTableDto> sqlTablesDto) => await visitor.Visit(this, sqlTablesDto);
     }
 }

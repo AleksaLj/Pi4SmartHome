@@ -1,5 +1,6 @@
 ﻿using AdminManagementDSL.AdminDSL.Common.Interfaces;
 using AdminManagementDSL.AdminDSL.Interpreter;
+using AdminManagementDSL.AdminDSL.Interpreter.Visitor;
 using AdminManagementDSL.AdminDSL.Parser;
 using AdminManagementDSL.AdminDSL.Scanner;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,13 @@ namespace AdminManagementDSL.AdminDSL.Common.Extensions
             return services;
         }
 
+        public static IServiceCollection AddNodeVisitor(this IServiceCollection services)
+        {
+            services.AddScoped<INodeVisitor, NodeVisitor>();
+
+            return services;
+        }
+
         public static IServiceCollection AddAdminDSLInterpreter(this IServiceCollection services)
         {
             services.AddScoped<IAdminDSLInterpreter, AdminDSLInterpreter>();
@@ -25,6 +33,11 @@ namespace AdminManagementDSL.AdminDSL.Common.Extensions
         public static IAdminDSLParser? GetAdminDSLParser(this IServiceProvider services)
         {
             return services.GetService<IAdminDSLParser>();
+        }
+
+        public static INodeVisitor? GetNodeVisitor(this IServiceProvider services)
+        {
+            return services.GetService<INodeVisitor>();
         }
 
         public static IAdminDSLInterpreter? GetAdminDSLInterpreter(this IServiceProvider services)

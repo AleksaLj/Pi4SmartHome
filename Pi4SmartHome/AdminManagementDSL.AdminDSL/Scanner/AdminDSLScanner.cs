@@ -10,7 +10,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
     public class AdminDSLScanner : IAdminDSLScanner
     {
         public string ProgramCode { get; set; } = string.Empty;
-        public Token? CurrentToken { get; set; }
+        public Token? CurrentToken { get;  set; }
         public int Position { get; set; }
         public char CurrentChar { get; set; }
 
@@ -19,7 +19,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
 
         public Task Configure(string programCode)
         {
-            ProgramCode = programCode;
+            ProgramCode = programCode.Trim();
             CurrentToken = null;
             Position = 0;
             CurrentChar = ProgramCode[Position];
@@ -68,7 +68,8 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                         && Peek(1) != ' ' 
                         && Peek(1) != '\r' 
                         && Peek(1) != '\n'
-                        && Peek(1) != '\t')
+                        && Peek(1) != '\t'
+                        && Peek(1) != ';')
                )
             {
                 return true;

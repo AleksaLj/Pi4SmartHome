@@ -15,7 +15,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
         private async void SkipProcessedToken(TokenTypeEnum tokenType, string? reservedKeyword = null)
         {
             if (_scanner?.CurrentToken?.TokenType == tokenType &&
-                (!string.IsNullOrEmpty(reservedKeyword) ? _scanner?.CurrentToken?.TokenValue?.ToString() == reservedKeyword : true))
+                (string.IsNullOrEmpty(reservedKeyword) || _scanner?.CurrentToken?.TokenValue?.ToString() == reservedKeyword))
             {
                 _scanner.CurrentToken = await _scanner.GetNextToken();
             }
@@ -26,30 +26,57 @@ namespace AdminManagementDSL.AdminDSL.Parser
         }
 
         //property_value: (a-zA-Z0-9\s)+ | (([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])) | NULL
-        private bool IsPropertyValueValid(string? propertyValue = null)
+        private bool IsValidEmails(string? propertyValue = null)
         {
-            var regexValue = "(a-zA-Z0-9\\s)+";
-            var regexEmail = "(([!#-'*+/-9=?A-Z^-~-]+(\\.[!#-'*+/-9=?A-Z^-~-]+)*|\\\"\\(\\[\\]!#-[^-~ \\t]|(\\\\[\\t -~]))+\\\")@([!#-'*+/-9=?A-Z^-~-]+(\\.[!#-'*+/-9=?A-Z^-~-]+)*|\\[[\\t -Z^-~]*]))";
+            var emailRegex = new Regex("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
 
             if (propertyValue == null)
             {
                 return true;
             }
 
-            var isPropertyValueValid = Regex.Match(propertyValue, regexValue).Success ||
-                                       Regex.Match(propertyValue, regexEmail).Success;
+            var emails = propertyValue.Split(",");
+            foreach (var email in emails)
+            {
+                var emailTrim = email.Trim();
+                if (!emailRegex.IsMatch(emailTrim))
+                    return false;
+            }
 
-            return isPropertyValueValid;
+            return true;
+        }
+        
+        private bool IsPropertyValueValid(string? propertyValue = null)
+        {
+            var propertyValueRegex = new Regex("^\\b(?:\\w|-)+\\b$");
+            
+            if (propertyValue == null)
+            {
+                return true;
+            }
+
+            var propertyValues = propertyValue.Split(",");
+            foreach (var propValue in propertyValues)
+            {
+                var propValueTrim = propValue.Trim();
+                if (!propertyValueRegex.IsMatch(propValueTrim))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         //property_assignment: property_name COLON type_keywords ASSIGN 'property_value'
         private AST PropertyAssignment()
         {
             var propertyNameToken = _scanner?.CurrentToken;
-            if (propertyNameToken == null)
+            if (propertyNameToken == null || propertyNameToken.TokenValue == null)
             {
                 throw Error.ErrorMessages.EmptyPropertyNameErr();
             }
+            SkipProcessedToken(TokenTypeEnum.PropertyKeyword);
 
             SkipProcessedToken(TokenTypeEnum.COLON);
             var propertyTypeToken = _scanner?.CurrentToken;
@@ -57,6 +84,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
             { 
                 throw Error.ErrorMessages.EmptyPropertyTypeErr();
             }
+            SkipProcessedToken(TokenTypeEnum.TypeKeyword);
 
             SkipProcessedToken(TokenTypeEnum.ASSIGN);
 
@@ -65,10 +93,16 @@ namespace AdminManagementDSL.AdminDSL.Parser
             {
                 throw Error.ErrorMessages.EmptyPropertyValueErr();
             }
-            if (!IsPropertyValueValid((string?)propertyValueToken.TokenValue))
+
+            var isPropertyValueValid = propertyNameToken.TokenValue.ToString() == ReservedKeywords.PropertyKeywords.Keyword_Users ?
+                IsValidEmails((string?)propertyValueToken.TokenValue) :
+                IsPropertyValueValid((string?)propertyValueToken.TokenValue);
+
+            if (!isPropertyValueValid)
             {
                 throw Error.ErrorMessages.InvalidPropertyValueErr();
             }
+            SkipProcessedToken(TokenTypeEnum.PROPERTY);
 
             var propertyNode = new PropertyNode(propertyNameToken, propertyTypeToken, propertyValueToken);
 
@@ -93,7 +127,12 @@ namespace AdminManagementDSL.AdminDSL.Parser
         //table_properties: property_definition+
         private IEnumerable<AST> TableProperties()
         {
-            var tablePropertiesNodes = PropertyDefinition();
+            var tablePropertiesNodes = new List<AST>();
+
+            foreach (var tableProperty in PropertyDefinition())
+            {
+                tablePropertiesNodes.Add(tableProperty);
+            }
 
             if (tablePropertiesNodes == null || tablePropertiesNodes.Count() == 0)
             {
@@ -113,6 +152,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
             {
                 throw Error.ErrorMessages.NullTableKeywordTokenErr();
             }
+            SkipProcessedToken(TokenTypeEnum.TableKeyword);
 
             SkipProcessedToken(TokenTypeEnum.COLON);
             var tableTypeKeywordToken = _scanner?.CurrentToken;
@@ -120,6 +160,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
             {
                 throw Error.ErrorMessages.NullTableTypeKeywordTokenErr();
             }
+            SkipProcessedToken(TokenTypeEnum.TypeKeyword);
 
             var tableProperties = TableProperties();
             SkipProcessedToken(TokenTypeEnum.SEMI);

@@ -1,10 +1,10 @@
-﻿using AdminManagementDSL.AdminDSL.Common.Interfaces;
-using System.Data;
+﻿using AdminManagementDSL.AdminDSL.Common.Dto;
+using AdminManagementDSL.AdminDSL.Common.Interfaces;
 
 namespace AdminManagementDSL.AdminDSL.Common.Core
 {
     public abstract class AST
     {
-        public abstract DataTable Accept(INodeVisitor visitor);
+        public abstract Task Accept(INodeVisitor visitor, List<SqlTableDto> sqlTablesDto);
     }
 }
