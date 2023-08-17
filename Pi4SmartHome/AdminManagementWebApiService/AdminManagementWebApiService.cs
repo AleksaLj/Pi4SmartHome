@@ -11,6 +11,7 @@ using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
 using Microsoft.ServiceFabric.Data;
+using Pi4SmartHome.Core.RabbitMQ.Extensions;
 
 namespace AdminManagementWebApiService
 {
@@ -51,7 +52,12 @@ namespace AdminManagementWebApiService
                         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
-                        
+
+                        //add services
+                        builder.Services.AddRabbitMQConfiguration(builder.Configuration);
+                        builder.Services.AddMessageConsumer();
+                        builder.Services.AddMessageProducer();
+
                         var app = builder.Build();
                         
                         // Configure the HTTP request pipeline.

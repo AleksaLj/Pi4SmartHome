@@ -1,23 +1,26 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+using Pi4SmartHome.Core.Helper;
+using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Configurations;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
 
 namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 {
-    public class MessageConsumer : RabbitMQBase, IMessageConsumer
+    public class MessageConsumer<TMessage> : RabbitMQBase, IMessageConsumer<TMessage> where TMessage : QueueMessage
     {
-        private readonly ILogger<MessageConsumer> _logger;
+        private readonly ILogger<MessageConsumer<TMessage>> _logger;
+        private readonly string _queueName;
 
         public MessageConsumer(IOptions<RabbitMQConfiguration> options, 
                                IServiceProvider services, 
-                               ILogger<MessageConsumer> logger) : base(options, services)
+                               ILogger<MessageConsumer<TMessage>> logger,
+                               string queueName) : base(options, services)
         {
             _logger = logger;
+            _queueName = queueName;
         }
 
         public async Task OnMessage()
@@ -28,8 +31,14 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 
                 consumer.Received += async (model, eventArgs) =>
                 {
-                    var body = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
-                    var message = JsonConvert.DeserializeObject(body);
+                    //var body = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
+                    //var message = JsonConvert.DeserializeObject(body);
+
+                    var body = eventArgs.Body.ToArray();
+                    var message = QueueMessage.GetQueueMessage<TMessage>(body);
+                    _logger.LogInformation(message.MessageId.ToString());
+                    Console.WriteLine(body);
+                    Console.WriteLine();
 
                     Console.WriteLine("On message event...");
 
@@ -38,8 +47,9 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
                     await Task.Yield();
                 };
 
+                string consumerTag = Channel.BasicConsume(_queueName, false, consumer);
 
-                string consumerTag = Channel.BasicConsume(RabbitMQConfig.AdminManagementDSLQueueName, false, consumer);
+                await TaskCache.True;
             }
             catch (Exception ex)
             {

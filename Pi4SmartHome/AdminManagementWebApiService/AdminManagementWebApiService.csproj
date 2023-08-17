@@ -15,4 +15,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pi4SmartHome.Core.RabbitMQ\Pi4SmartHome.Core.RabbitMQ.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,4 @@
-﻿
-using AdminManagementDSL.AdminDSL.Common.Core;
-using AdminManagementDSL.AdminDSL.Common.Interfaces;
+﻿using AdminManagementDSL.AdminDSL.Common.Interfaces;
 using AdminManagementDSL.AdminDSL.Scanner;
 
 namespace AdminManagementDSL.Test

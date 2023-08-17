@@ -1,6 +1,8 @@
-﻿
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Configurations;
 using Pi4SmartHome.Core.RabbitMQ.Implementations;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
@@ -18,16 +20,31 @@ namespace Pi4SmartHome.Core.RabbitMQ.Extensions
             return services;
         }
 
-        public static IServiceCollection AddMessageProducer(this IServiceCollection services, IConfiguration? config = null)
+        public static IServiceCollection AddMessageProducer<TMessage>(this IServiceCollection services, 
+                                                                           Func<string> getExchangeName,
+                                                                           Func<string> getExchangeQueueRoutingKey) where TMessage : QueueMessage
         {
-            services.AddSingleton<IMessageProducer, MessageProducer>();
+            services.AddSingleton(typeof(IMessageProducer<TMessage>), (srv) =>
+            {
+                return new MessageProducer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
+                                                     srv,
+                                                     srv.GetService<ILogger<MessageProducer<TMessage>>>()!,
+                                                     exchange: getExchangeName(),
+                                                     exchangeQueueRoutingKey: getExchangeQueueRoutingKey());
+            });
 
             return services;
         }
 
-        public static IServiceCollection AddMessageConsumer(this IServiceCollection services, IConfiguration? config = null)
+        public static IServiceCollection AddMessageConsumer<TMessage>(this IServiceCollection services, Func<string> getQueueName) where TMessage : QueueMessage
         {
-            services.AddSingleton<IMessageConsumer, MessageConsumer>();
+            services.AddSingleton(typeof(IMessageConsumer<TMessage>), (srv) => 
+            {
+                return new MessageConsumer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
+                                                     srv,
+                                                     srv.GetService<ILogger<MessageConsumer<TMessage>>>()!,
+                                                     queueName: getQueueName());
+            });
 
             return services;
         }
@@ -37,14 +54,14 @@ namespace Pi4SmartHome.Core.RabbitMQ.Extensions
             return config.GetSection(RABBITMQ_CONFIG_ROOT).Get<RabbitMQConfiguration>()!;
         }
 
-        public static IMessageProducer? GetMessageProducer(this IServiceProvider services)
+        public static IMessageProducer<TMessage>? GetMessageProducer<TMessage>(this IServiceProvider services) where TMessage : QueueMessage
         {
-            return services.GetService<IMessageProducer>();
+            return services.GetService<IMessageProducer<TMessage>>();
         }
 
-        public static IMessageConsumer? GetMessageConsumer(this IServiceProvider services)
+        public static IMessageConsumer<TMessage>? GetMessageConsumer<TMessage>(this IServiceProvider services) where TMessage : QueueMessage
         {
-            return services.GetService<IMessageConsumer>();
+            return services.GetService<IMessageConsumer<TMessage>>();
         }
     }
 }

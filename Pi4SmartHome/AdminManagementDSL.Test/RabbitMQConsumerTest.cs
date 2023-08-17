@@ -1,12 +1,13 @@
-﻿using Pi4SmartHome.Core.RabbitMQ.Interfaces;
+﻿using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
+using Pi4SmartHome.Core.RabbitMQ.Interfaces;
 
 namespace AdminManagementDSL.Test
 {
     internal class RabbitMQConsumerTest
     {
-        public IMessageConsumer MessageConsumer { get; set; }
+        public IMessageConsumer<AdminDSLMessage> MessageConsumer { get; set; }
 
-        public RabbitMQConsumerTest(IMessageConsumer messageConsumer)
+        public RabbitMQConsumerTest(IMessageConsumer<AdminDSLMessage> messageConsumer)
         {
             MessageConsumer = messageConsumer;
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Pi4SmartHome.Core.Helper;
 using Pi4SmartHome.Core.Implementations;
 using Pi4SmartHome.Core.RabbitMQ.Configurations;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
@@ -13,16 +14,25 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
         protected IConnection? Connection { get; set; }
         protected IModel? Channel { get; set; }
         protected readonly RabbitMQConfiguration RabbitMQConfig;
-        readonly object obj = new object();
+        readonly object obj = new();
 
         public RabbitMQBase(IOptions<RabbitMQConfiguration> options, IServiceProvider services) : base(services, services.GetService<ILogger<RabbitMQBase>>()!)
         {
             RabbitMQConfig = options.Value;
         }
 
-        public bool IsConnected => Connection != null && Connection.IsOpen == true;
+        public bool IsConnected
+        {
+            get 
+            {
+                lock (obj)
+                {
+                    return Connection != null && Connection.IsOpen == true;
+                }
+            }
+        }
 
-        public async Task ConnectAsync()
+        public async Task<bool> ConnectAsync()
         {
             if (!IsConnected)
             {
@@ -62,10 +72,12 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
                         Connection = null;
                     }
                 }
-            }            
+            }
+
+            return await TaskCache.True;
         }
 
-        public async Task DisconnectAsync()
+        public async Task<bool> DisconnectAsync()
         {
             if (IsConnected)
             {
@@ -78,6 +90,8 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
                     }
                 }                
             }
+
+            return await TaskCache.True;
         }
     }
 }

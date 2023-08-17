@@ -1,7 +1,10 @@
 ﻿using AdminManagementWebApi.Test.Models;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
+using System.Text.Json;
 
 namespace AdminManagementWebApi.Test.Controllers
 {
@@ -10,22 +13,25 @@ namespace AdminManagementWebApi.Test.Controllers
     public class AdminManagementDSLController : ControllerBase
     {
         private readonly ILogger<AdminManagementDSLController> Log;
-        protected IMessageProducer MessageProducer { get; set; }
-        protected IMessageConsumer MessageConsumer { get; set; }
+        protected IMessageProducer<AdminDSLMessage> MessageProducer { get; set; }
+        private readonly IMediator _mediator;
 
         public AdminManagementDSLController(ILogger<AdminManagementDSLController> log, 
-                                            IMessageProducer messageProducer, 
-                                            IMessageConsumer messageConsumer)
+                                            IMessageProducer<AdminDSLMessage> messageProducer,
+                                            IMediator mediator)
         {
             Log = log;
             MessageProducer = messageProducer;
-            MessageConsumer = messageConsumer;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveDSL([FromBody] AdminManagementDSLModel model)
+        public async Task<IActionResult> SaveAdminManagementDSL([FromBody] AdminManagementDSLModel model)
         {
-            var resultModel = new ResultModel();            
+            var resultModel = new ResultModel();
+
+            var json = PrepareJson();
+            model.DSLSourceCode = json;
 
             try
             {
@@ -44,7 +50,8 @@ namespace AdminManagementWebApi.Test.Controllers
                     await MessageProducer.ConnectAsync();
                 }
 
-                await MessageProducer.SendMessageAsync(model);
+                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode);
+                await MessageProducer.SendMessageAsync(adminDslMsg);
 
                 return Ok(resultModel);
             }
@@ -54,9 +61,38 @@ namespace AdminManagementWebApi.Test.Controllers
                 resultModel.Message = ex.Message;
                 resultModel.StatusCode = System.Net.HttpStatusCode.InternalServerError;
                 resultModel.ReasonPhrase = "Internal Server Error.";
+                Log.LogError(ex, $"[Server exception]: {ex.Message}");
 
-                throw;
+                return BadRequest(resultModel);
             }            
+        }
+
+        private string PrepareJson()
+        {
+            string adminDSL = @"
+                                    PI4SMARTHOMEADMIN.PROVISION
+
+                                    BEGIN
+                                    {
+	                                    DEFINE ESTATE: TABLE
+	                                    EstateType: FIELD = `Home` AND Name: FIELD = `testName` AND Addr: FIELD = `testAddr` AND Description: FIELD = `testDesc`;
+
+	                                    DEFINE ESTATE_USERS: TABLE
+	                                    Users: AGGR = `user1@gmail.com, user2@gmail.com, user3@gmail.com`;
+
+	                                    DEFINE ESTATE_PARTS: TABLE
+	                                    EstateParts: AGGR = `Part1, Part2, Part3`;
+
+	                                    DEFINE ESTATE_DEVICES: TABLE
+	                                    DeviceType: FIELD = `devType1` AND IsActive: FIELD = `true` AND EstatePart: FIELD = `estatePart1`;
+                                    }
+                                    END
+                               ";
+
+            var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
+            var json = JsonSerializer.Serialize<AdminManagementDSLModel>(model);
+
+            return json;
         }
     }
 }
