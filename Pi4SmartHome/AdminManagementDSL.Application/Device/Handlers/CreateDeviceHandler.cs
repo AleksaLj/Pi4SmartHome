@@ -19,12 +19,12 @@ namespace AdminManagementDSL.Application.Device.Handlers
 
             var item = new Devices
             {
-                IsActive = request.isActive,
-                TimeActivated = request.timeActivated,
-                TimeDeactivated = request.timeDeactivated,
-                EstateId = request.estateId,
-                EstatePartId = request.estatePartId,
-                DeviceTypeId = request.deviceTypeId
+                IsActive = request.IsActive,
+                TimeActivated = request.TimeActivated,
+                TimeDeactivated = request.TimeDeactivated,
+                EstateId = request.EstateId,
+                EstatePartId = request.EstatePartId,
+                DeviceTypeId = request.DeviceTypeId
             };
 
             return await _devicesRepo.InsertAsync(item);

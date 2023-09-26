@@ -2,16 +2,16 @@
 
 namespace AdminManagementDSL.Application.User.Commands
 {
-    public record CreateUserCommand(string? firstName,
-                                    string? lastName,
-                                    DateTime? birthDate,
-                                    string? addr,
-                                    string? city,
-                                    string? country,
-                                    string email,
-                                    string? phone,
-                                    string pswrd,
-                                    char gdprFlag,
-                                    string signInKey,
-                                    char emailVerify) : IRequest<int>;
+    public record CreateUserCommand(string? FirstName,
+                                    string? LastName,
+                                    DateTime? BirthDate,
+                                    string? Addr,
+                                    string? City,
+                                    string? Country,
+                                    string Email,
+                                    string? Phone,
+                                    string Pswrd,
+                                    char GdprFlag,
+                                    string SignInKey,
+                                    char EmailVerify) : IRequest<int>;
 }

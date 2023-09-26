@@ -15,8 +15,4 @@
     <ProjectReference Include="..\AdminManagementDSL.Core\AdminManagementDSL.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AdminDSL\" />
-  </ItemGroup>
-
 </Project>

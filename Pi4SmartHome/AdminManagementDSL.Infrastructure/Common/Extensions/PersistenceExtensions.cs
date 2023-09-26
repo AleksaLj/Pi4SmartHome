@@ -36,6 +36,13 @@ namespace AdminManagementDSL.Infrastructure.Common.Extensions
             return services;
         }
 
+        public static IServiceCollection AddAdminDslRepo(this IServiceCollection services)
+        {
+            services.AddScoped<IAdminDSLRepo, AdminDSLRepo>();
+
+            return services;
+        }
+
         public static IServiceCollection AddSqlConnOptions(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddOptions<SqlConnectionOptions>().Bind(configuration.GetSection(Configs.SqlConfigRoot));
@@ -61,6 +68,11 @@ namespace AdminManagementDSL.Infrastructure.Common.Extensions
         public static IEstatePartRepo? GetEstatePartRepo(this IServiceProvider provider)
         {
             return provider.GetService<IEstatePartRepo>();
+        }
+
+        public static IAdminDSLRepo? GetAdminDslRepo(this IServiceProvider provider)
+        {
+            return provider.GetService<IAdminDSLRepo>();
         }
 
         public static SqlConnectionOptions? GetSqlConnOptions(this IConfiguration configuration)

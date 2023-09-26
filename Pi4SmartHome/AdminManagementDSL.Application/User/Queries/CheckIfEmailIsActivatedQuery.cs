@@ -2,5 +2,5 @@
 
 namespace AdminManagementDSL.Application.User.Queries
 {
-    public record CheckIfEmailIsActivatedQuery(string email) : IRequest<bool>;
+    public record CheckIfEmailIsActivatedQuery(string Email) : IRequest<bool>;
 }

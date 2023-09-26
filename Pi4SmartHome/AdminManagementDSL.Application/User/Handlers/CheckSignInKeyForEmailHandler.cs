@@ -15,7 +15,7 @@ namespace AdminManagementDSL.Application.User.Handlers
 
         public async Task<bool> Handle(CheckSignInKeyForEmailQuery request, CancellationToken cancellationToken)
         {
-            var result = await _usersRepo.CheckSignInKeyForEmailAsync(request.email, request.signInKey);
+            var result = await _usersRepo.CheckSignInKeyForEmailAsync(request.Email, request.SignInKey);
 
             return result;
         }

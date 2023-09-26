@@ -16,7 +16,7 @@ namespace AdminManagementDSL.Application.Device.Handlers
 
         public async Task<Devices?> Handle(GetDeviceByIdQuery request, CancellationToken cancellationToken)
         {
-            var item = await _devicesRepo.GetByIdAsync(request.id);
+            var item = await _devicesRepo.GetByIdAsync(request.Id);
 
             return item;
         }

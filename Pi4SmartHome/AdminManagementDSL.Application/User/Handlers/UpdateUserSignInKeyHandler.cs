@@ -15,7 +15,7 @@ namespace AdminManagementDSL.Application.User.Handlers
 
         public async Task<int> Handle(UpdateUserSignInKeyCommand request, CancellationToken cancellationToken)
         {
-            var result = await _usersRepo.UpdateUserSignInKeyAsync(request.email, request.signInKey);
+            var result = await _usersRepo.UpdateUserSignInKeyAsync(request.Email, request.SignInKey);
 
             return result;
         }

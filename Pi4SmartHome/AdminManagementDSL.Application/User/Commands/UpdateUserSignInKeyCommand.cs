@@ -2,5 +2,5 @@
 
 namespace AdminManagementDSL.Application.User.Commands
 {
-    public record UpdateUserSignInKeyCommand(string email, string signInKey) : IRequest<int>;
+    public record UpdateUserSignInKeyCommand(string Email, string SignInKey) : IRequest<int>;
 }

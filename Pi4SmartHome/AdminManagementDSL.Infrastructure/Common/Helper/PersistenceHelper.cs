@@ -16,7 +16,7 @@ namespace AdminManagementDSL.Infrastructure.Common.Helper
 
         public static int? GetInt(SqlDataReader rdr, string column)
         {
-            if (rdr[column] == null)
+            if (rdr[column] == DBNull.Value)
             {
                 return null;
             }

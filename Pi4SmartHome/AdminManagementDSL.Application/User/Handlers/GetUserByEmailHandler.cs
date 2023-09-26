@@ -16,7 +16,7 @@ namespace AdminManagementDSL.Application.User.Handlers
 
         public async Task<Users?> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)
         {
-            var item = await _usersRepo.SelectUserByEmailAsync(request.email);
+            var item = await _usersRepo.SelectUserByEmailAsync(request.Email);
 
             return item;
         }

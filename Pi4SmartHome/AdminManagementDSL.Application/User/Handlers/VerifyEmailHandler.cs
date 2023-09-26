@@ -15,7 +15,7 @@ namespace AdminManagementDSL.Application.User.Handlers
 
         public async Task<int> Handle(VerifyEmailCommand request, CancellationToken cancellationToken)
         {
-            var result = await _usersRepo.VerifyEmailAsync(request.email);
+            var result = await _usersRepo.VerifyEmailAsync(request.Email);
 
             return result;
         }

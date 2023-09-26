@@ -20,18 +20,18 @@ namespace AdminManagementDSL.Application.User.Handlers
 
             var item = new Users
             {
-                FirstName = request.firstName,
-                LastName = request.lastName,
-                BirthDate = request.birthDate,
-                Addr = request.addr,
-                City = request.city,
-                Country = request.country,
-                Email = request.email,
-                Phone = request.phone,
-                Pswrd = request.pswrd,
-                GDPRFlag = request.gdprFlag,
-                SignInKey = request.signInKey,
-                EmailVerify = request.emailVerify
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                BirthDate = request.BirthDate,
+                Addr = request.Addr,
+                City = request.City,
+                Country = request.Country,
+                Email = request.Email,
+                Phone = request.Phone,
+                Pswrd = request.Pswrd,
+                GDPRFlag = request.GdprFlag,
+                SignInKey = request.SignInKey,
+                EmailVerify = request.EmailVerify
             };
 
             return await _usersRepo.InsertAsync(item);

@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminManagementDSL.AdminDSL\AdminManagementDSL.AdminDSL.csproj" />
+    <ProjectReference Include="..\AdminManagementDSL.Application\AdminManagementDSL.Application.csproj" />
+    <ProjectReference Include="..\AdminManagementDSL.Infrastructure\AdminManagementDSL.Infrastructure.csproj" />
     <ProjectReference Include="..\Pi4SmartHome.Core.RabbitMQ\Pi4SmartHome.Core.RabbitMQ.csproj" />
   </ItemGroup>
 

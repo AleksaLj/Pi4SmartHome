@@ -20,9 +20,9 @@ namespace AdminManagementDSL.Application.Estate.Handlers
 
             var item = new Estates
             {
-                Addr = request.addr,
-                Description = request.description,
-                EstateTypeId = request.estateTypeId
+                Addr = request.Addr,
+                Description = request.Description,
+                EstateTypeId = request.EstateTypeId
             };
 
             return await _estatesRepo.InsertAsync(item);

@@ -16,7 +16,7 @@ namespace AdminManagementDSL.Application.User.Handlers
 
         public async Task<Users?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var item = await _usersRepo.GetByIdAsync(request.id);
+            var item = await _usersRepo.GetByIdAsync(request.Id);
 
             return item;
         }

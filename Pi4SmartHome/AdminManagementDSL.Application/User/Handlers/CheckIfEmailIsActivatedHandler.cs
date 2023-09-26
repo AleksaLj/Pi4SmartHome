@@ -15,7 +15,7 @@ namespace AdminManagementDSL.Application.User.Handlers
 
         public async Task<bool> Handle(CheckIfEmailIsActivatedQuery request, CancellationToken cancellationToken)
         {
-            var result = await _usersRepo.CheckIfEmailIsActivatedAsync(request.email);
+            var result = await _usersRepo.CheckIfEmailIsActivatedAsync(request.Email);
 
             return result;
         }

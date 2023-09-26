@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using AdminManagementDSL.AdminDSL.Common.Extensions;
+using AdminManagementDSL.Application.AdminDSL.Commands;
+using AdminManagementDSL.Infrastructure.Common.Extensions;
 using AdminManagementDSL.Test;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +20,10 @@ var app = App.BuildServices((services, config) =>
     services.AddAdminDSLParser();
     services.AddNodeVisitor();
     services.AddAdminDSLInterpreter();
+    services.AddAdminDslRepo();
 
     //MediatR
-    services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+    services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateAdminDSLCommand>());
 });
 
 var mediator = app.Services.GetService<IMediator>();

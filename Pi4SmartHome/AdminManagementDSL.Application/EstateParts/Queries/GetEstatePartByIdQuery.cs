@@ -3,5 +3,5 @@ using MediatR;
 
 namespace AdminManagementDSL.Application.EstateParts.Queries
 {
-    public record GetEstatePartByIdQuery(int id) : IRequest<EstatePart?>;
+    public record GetEstatePartByIdQuery(int Id) : IRequest<EstatePart?>;
 }

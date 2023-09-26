@@ -20,8 +20,8 @@ namespace AdminManagementDSL.Application.EstateParts.Handlers
 
             var item = new EstatePart
             {
-                EstatePartName = request.estatePartName,
-                EstateId = request.estateId
+                EstatePartName = request.EstatePartName,
+                EstateId = request.EstateId
             };
 
             return await _estatePartRepo.InsertAsync(item);

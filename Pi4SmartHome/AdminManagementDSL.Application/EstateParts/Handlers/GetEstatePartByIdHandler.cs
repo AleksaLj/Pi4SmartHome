@@ -16,7 +16,7 @@ namespace AdminManagementDSL.Application.EstateParts.Handlers
 
         public async Task<EstatePart?> Handle(GetEstatePartByIdQuery request, CancellationToken cancellationToken)
         {
-            var item = await _estatePartRepo.GetByIdAsync(request.id);
+            var item = await _estatePartRepo.GetByIdAsync(request.Id);
 
             return item;
         }

@@ -2,8 +2,8 @@
 
 namespace AdminManagementDSL.Application.Estate.Commands
 {
-    public record CreateEstateCommand(string name,
-                                      string? addr,
-                                      string? description,
-                                      byte estateTypeId) : IRequest<int>;
+    public record CreateEstateCommand(string Name,
+                                      string? Addr,
+                                      string? Description,
+                                      byte EstateTypeId) : IRequest<int>;
 }
