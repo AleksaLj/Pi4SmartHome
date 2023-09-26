@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Configurations;
@@ -22,27 +21,32 @@ namespace Pi4SmartHome.Core.RabbitMQ.Extensions
 
         public static IServiceCollection AddMessageProducer<TMessage>(this IServiceCollection services, 
                                                                            Func<string> getExchangeName,
-                                                                           Func<string> getExchangeQueueRoutingKey) where TMessage : QueueMessage
+                                                                           Func<string> getExchangeQueueRoutingKey,
+                                                                           Func<string> getQueueName) where TMessage : QueueMessage
         {
             services.AddSingleton(typeof(IMessageProducer<TMessage>), (srv) =>
             {
                 return new MessageProducer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
                                                      srv,
-                                                     srv.GetService<ILogger<MessageProducer<TMessage>>>()!,
                                                      exchange: getExchangeName(),
-                                                     exchangeQueueRoutingKey: getExchangeQueueRoutingKey());
+                                                     exchangeQueueRoutingKey: getExchangeQueueRoutingKey(),
+                                                     queue: getQueueName());
             });
 
             return services;
         }
 
-        public static IServiceCollection AddMessageConsumer<TMessage>(this IServiceCollection services, Func<string> getQueueName) where TMessage : QueueMessage
+        public static IServiceCollection AddMessageConsumer<TMessage>(this IServiceCollection services,
+                                                                      Func<string> getExchangeName,
+                                                                      Func<string> getExchangeQueueRoutingKey,
+                                                                      Func<string> getQueueName) where TMessage : QueueMessage
         {
             services.AddSingleton(typeof(IMessageConsumer<TMessage>), (srv) => 
             {
                 return new MessageConsumer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
                                                      srv,
-                                                     srv.GetService<ILogger<MessageConsumer<TMessage>>>()!,
+                                                     exchange: getExchangeName(),
+                                                     exchangeQueueRoutingKey: getExchangeQueueRoutingKey(),
                                                      queueName: getQueueName());
             });
 

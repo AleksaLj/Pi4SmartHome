@@ -12,10 +12,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddRabbitMQConfiguration(builder.Configuration);
-builder.Services.AddMessageConsumer<AdminDSLMessage>(getQueueName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
 
 builder.Services.AddMessageProducer<AdminDSLMessage>(getExchangeName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLExchangeName").Value!,
-                                                     getExchangeQueueRoutingKey: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueRoutingKey").Value!);
+                                                     getExchangeQueueRoutingKey: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueRoutingKey").Value!,
+                                                     getQueueName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 var app = builder.Build();

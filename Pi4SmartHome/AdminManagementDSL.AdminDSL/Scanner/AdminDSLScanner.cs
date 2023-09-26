@@ -14,9 +14,6 @@ namespace AdminManagementDSL.AdminDSL.Scanner
         public int Position { get; set; }
         public char CurrentChar { get; set; }
 
-        public AdminDSLScanner() { }
-
-
         public Task Configure(string programCode)
         {
             ProgramCode = programCode.Trim();
@@ -31,28 +28,19 @@ namespace AdminManagementDSL.AdminDSL.Scanner
         {
             Position += positionUpLength;
 
-            if (Position > ProgramCode.Length - 1)
-                CurrentChar = default;
-            else
-                CurrentChar = ProgramCode[Position];
+            CurrentChar = Position > ProgramCode.Length - 1 ? default : ProgramCode[Position];
         }
 
         private char Peek(int peekNumber)
         {
-            int peekPosition = Position + peekNumber;
+            var peekPosition = Position + peekNumber;
 
-            if (peekPosition > ProgramCode.Length - 1)
-                return default;
-
-            return ProgramCode[peekPosition];
+            return peekPosition > ProgramCode.Length - 1 ? default : ProgramCode[peekPosition];
         }
 
         private Task SkipWhiteSpaces()
         {
-            while (CurrentChar == ' ' 
-                || CurrentChar == '\r' 
-                || CurrentChar == '\n'
-                || CurrentChar == '\t')
+            while (CurrentChar is ' ' or '\r' or '\n' or '\t')
             {
                 PositionUp();
             }
@@ -62,25 +50,19 @@ namespace AdminManagementDSL.AdminDSL.Scanner
 
         private bool ShouldContinueReadingPropertyValue()
         {
-            if (CurrentChar != '`'
-                || (CurrentChar == '`' 
-                        && Peek(1) != default(char) 
-                        && Peek(1) != ' ' 
-                        && Peek(1) != '\r' 
-                        && Peek(1) != '\n'
-                        && Peek(1) != '\t'
-                        && Peek(1) != ';')
-               )
-            {
-                return true;
-            }
-
-            return false;
+            return CurrentChar != '`'
+                   || (CurrentChar == '`' 
+                       && Peek(1) != default(char) 
+                       && Peek(1) != ' ' 
+                       && Peek(1) != '\r' 
+                       && Peek(1) != '\n'
+                       && Peek(1) != '\t'
+                       && Peek(1) != ';');
         }        
 
         private string ReadPropertyValue()
         {
-            StringBuilder propertyValue = new StringBuilder();
+            StringBuilder propertyValue = new();
 
             while (ShouldContinueReadingPropertyValue())
             {
@@ -94,16 +76,11 @@ namespace AdminManagementDSL.AdminDSL.Scanner
 
         private bool ShouldContinueReadingIdentifierValue()
         {
-            if (CurrentChar != default(char)
-                && CurrentChar != '\r'
-                && CurrentChar != '\n'
-                && CurrentChar != '\t'
-                && (Char.IsLetterOrDigit(CurrentChar) || CurrentChar == '.' || CurrentChar == '_'))
-            {
-                return true;
-            }
-
-            return false;
+            return CurrentChar != default(char)
+                   && CurrentChar != '\r'
+                   && CurrentChar != '\n'
+                   && CurrentChar != '\t'
+                   && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '.' || CurrentChar == '_');
         }
 
         private string ReadIdentifierValue()
@@ -121,7 +98,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
 
         private Token ReadIdentifierToken()
         {
-            string identifierValue = ReadIdentifierValue();
+            var identifierValue = ReadIdentifierValue();
 
             if (identifierValue.IsIdentifierValueAdminDSLKeyword())
             {
@@ -151,11 +128,11 @@ namespace AdminManagementDSL.AdminDSL.Scanner
             throw Error.ErrorMessages.UnkownIdentifierTokenErr();
         }
 
-        public async Task<Token> GetNextToken()
+        public async Task<Token?> GetNextToken()
         {
             while (CurrentChar != default(char))
             {
-                var result = SkipWhiteSpaces();
+                await SkipWhiteSpaces();
 
                 if (CurrentChar == '`')
                 {
@@ -163,7 +140,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     var propertyValue = ReadPropertyValue();
                     var token = new Token(TokenTypeEnum.PROPERTY, propertyValue);
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
                 if (CurrentChar == ':')
@@ -171,7 +148,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     var token = new Token(TokenTypeEnum.COLON, CurrentChar);
                     PositionUp();
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
                 if(CurrentChar == '=')
@@ -179,7 +156,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     var token = new Token(TokenTypeEnum.ASSIGN, '=');
                     PositionUp();
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
                 if (CurrentChar == ';')
@@ -187,7 +164,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     var token = new Token(TokenTypeEnum.SEMI, ';');
                     PositionUp();
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
                 if(CurrentChar == '{')
@@ -195,7 +172,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     var token = new Token(TokenTypeEnum.LCurlyBracket, '{');
                     PositionUp();
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
                 if (CurrentChar == '}')
@@ -203,21 +180,21 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     var token = new Token(TokenTypeEnum.RCurlyBracket, '}');
                     PositionUp();
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
-                if (Char.IsLetterOrDigit(CurrentChar))
+                if (char.IsLetterOrDigit(CurrentChar))
                 {
                     var token = ReadIdentifierToken();
 
-                    return await TaskCache.ObjectValue<Token>(token);
+                    return await TaskCache.ObjectValue(token);
                 }
 
                 throw Error.ErrorMessages.InvalidTokenErr();
             }
 
             var eofToken = new Token(TokenTypeEnum.EOF, null);
-            return await TaskCache.ObjectValue<Token>(eofToken);
+            return await TaskCache.ObjectValue(eofToken);
         }
     }
 }

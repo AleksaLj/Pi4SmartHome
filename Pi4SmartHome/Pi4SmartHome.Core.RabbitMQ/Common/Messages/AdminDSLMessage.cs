@@ -2,24 +2,27 @@
 
 namespace Pi4SmartHome.Core.RabbitMQ.Common.Messages
 {
+    [Serializable]
     public class AdminDSLMessage : QueueMessage
     {
-        public string? DSLSourceCode { get; set; }
+        public string? DslSourceCode { get; set; }
 
         public AdminDSLMessage(string? dslSourceCode)
         {
-            DSLSourceCode = dslSourceCode ?? throw new ArgumentNullException(nameof(dslSourceCode));
+            DslSourceCode = dslSourceCode;
         }
 
-        protected AdminDSLMessage(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected AdminDSLMessage(
+            SerializationInfo info, 
+            StreamingContext context) : base(info, context)
         {
-            DSLSourceCode = info.GetString(nameof(DSLSourceCode)) ?? throw new ArgumentNullException(nameof(DSLSourceCode));
+            DslSourceCode = info.GetString(nameof(DslSourceCode)) ?? throw new ArgumentNullException(info.GetString(nameof(DslSourceCode)));
         }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue(nameof(DSLSourceCode), DSLSourceCode);
+            info.AddValue(nameof(DslSourceCode), DslSourceCode);
         }
     }
 }

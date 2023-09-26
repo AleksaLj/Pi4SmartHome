@@ -11,10 +11,14 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 {
     public class RabbitMQBase : ServiceBase, IRabbitMQ
     {
+        readonly object obj = new();
+
         protected IConnection? Connection { get; set; }
         protected IModel? Channel { get; set; }
         protected readonly RabbitMQConfiguration RabbitMQConfig;
-        readonly object obj = new();
+        protected string? Queue { get; set; }
+        protected string? Exchange { get; set; }
+        protected string? ExchangeQueueRoutingKey { get; set; }
 
         public RabbitMQBase(IOptions<RabbitMQConfiguration> options, IServiceProvider services) : base(services, services.GetService<ILogger<RabbitMQBase>>()!)
         {
@@ -59,15 +63,14 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
                         if (Channel == null || Channel.IsOpen == false)
                         {
                             Channel = Connection?.CreateModel();
-                            //Services.AdminManagementDSL
-                            Channel.ExchangeDeclare(exchange: RabbitMQConfig.AdminManagementDSLExchangeName, ExchangeType.Direct);
-                            Channel?.QueueDeclare(queue: RabbitMQConfig.AdminManagementDSLQueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-                            Channel.QueueBind(queue: RabbitMQConfig.AdminManagementDSLQueueName, exchange: RabbitMQConfig.AdminManagementDSLExchangeName, routingKey: RabbitMQConfig.AdminManagementDSLQueueRoutingKey);
+                            Channel.ExchangeDeclare(exchange: Exchange, ExchangeType.Direct);
+                            Channel?.QueueDeclare(queue: Queue, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                            Channel.QueueBind(queue: Queue, exchange: Exchange, routingKey: ExchangeQueueRoutingKey);
                         }
                     }
                     catch (Exception ex)
                     {
-                        Log.LogError(ex, $"Unsuccess connection to {RabbitMQConfig.AdminManagementDSLExchangeName} exchange, {RabbitMQConfig.AdminManagementDSLQueueName}.");
+                        Log.LogError(ex, "Unsuccessful connection to {Exchange} exchange, {Queue}.", Exchange, Queue);
                         Channel = null;
                         Connection = null;
                     }

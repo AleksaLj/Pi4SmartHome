@@ -1,6 +1,5 @@
 ﻿using AdminManagementWebApi.Test.Models;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
@@ -26,7 +25,7 @@ namespace AdminManagementWebApi.Test.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveAdminManagementDSL([FromBody] AdminManagementDSLModel model)
+        public async Task<IActionResult> SaveAdminManagementDsl([FromBody] AdminManagementDSLModel model)
         {
             var resultModel = new ResultModel();
 
@@ -67,7 +66,7 @@ namespace AdminManagementWebApi.Test.Controllers
             }            
         }
 
-        private string PrepareJson()
+        private static string PrepareJson()
         {
             string adminDSL = @"
                                     PI4SMARTHOMEADMIN.PROVISION
@@ -90,7 +89,7 @@ namespace AdminManagementWebApi.Test.Controllers
                                ";
 
             var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
-            var json = JsonSerializer.Serialize<AdminManagementDSLModel>(model);
+            var json = JsonSerializer.Serialize(model);
 
             return json;
         }

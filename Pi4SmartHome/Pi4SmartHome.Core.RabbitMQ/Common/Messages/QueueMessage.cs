@@ -1,5 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using System.Text.Json;
+using System.Text;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Pi4SmartHome.Core.RabbitMQ.Common.Messages
 {
@@ -17,28 +19,28 @@ namespace Pi4SmartHome.Core.RabbitMQ.Common.Messages
             SerializationInfo info,
             StreamingContext context) 
         {
-            if(string.IsNullOrEmpty(info.GetString(nameof(MessageId)))) throw new ArgumentNullException(nameof(MessageId));
-
             MessageId = Guid.Parse(info.GetString(nameof(MessageId))!);
         }
 
         public byte[] GetMessageData()
         { 
-            using MemoryStream ms = new MemoryStream();
-            JsonSerializer.Serialize(ms, this);
+            var jsonString = JsonConvert.SerializeObject(this);
+            var message = Encoding.UTF8.GetBytes(jsonString);
 
-            return ms.ToArray();
+            return message;
         }
 
         public static TMessage? GetQueueMessage<TMessage>(byte[] data) where TMessage : QueueMessage
         {
-            using MemoryStream ms = new MemoryStream(data);
-            return GetQueueMessage<TMessage>(ms);
+            var message = Encoding.UTF8.GetString(data);
+            return GetQueueMessage<TMessage>(message);
         }
 
-        public static TMessage? GetQueueMessage<TMessage>(Stream stream) where TMessage : QueueMessage
+        public static TMessage? GetQueueMessage<TMessage>(string? message) where TMessage : QueueMessage
         {
-            var obj = JsonSerializer.Deserialize<TMessage>(stream);
+            if(message == null) return null;
+
+            var obj = JsonConvert.DeserializeObject<TMessage>(message);
             return obj;
         }
 

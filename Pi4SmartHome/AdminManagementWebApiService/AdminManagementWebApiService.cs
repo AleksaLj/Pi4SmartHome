@@ -1,16 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Fabric;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Microsoft.ServiceFabric.Data;
+using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Extensions;
 
 namespace AdminManagementWebApiService
@@ -55,8 +47,9 @@ namespace AdminManagementWebApiService
 
                         //add services
                         builder.Services.AddRabbitMQConfiguration(builder.Configuration);
-                        builder.Services.AddMessageConsumer();
-                        builder.Services.AddMessageProducer();
+                        builder.Services.AddMessageProducer<AdminDSLMessage>(getExchangeName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLExchangeName").Value!,
+                            getExchangeQueueRoutingKey: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueRoutingKey").Value!,
+                            getQueueName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
 
                         var app = builder.Build();
                         

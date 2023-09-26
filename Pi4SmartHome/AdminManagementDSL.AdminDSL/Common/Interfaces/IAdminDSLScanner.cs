@@ -7,6 +7,6 @@ namespace AdminManagementDSL.AdminDSL.Common.Interfaces
     {
         Task Configure(string programCode);
         Token? CurrentToken { get; set; }
-        Task<Token> GetNextToken();
+        Task<Token?> GetNextToken();
     }
 }

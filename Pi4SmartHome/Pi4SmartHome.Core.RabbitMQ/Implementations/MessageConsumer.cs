@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Pi4SmartHome.Core.Helper;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
@@ -11,19 +12,41 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 {
     public class MessageConsumer<TMessage> : RabbitMQBase, IMessageConsumer<TMessage> where TMessage : QueueMessage
     {
-        private readonly ILogger<MessageConsumer<TMessage>> _logger;
-        private readonly string _queueName;
+        private readonly object _syncHandlerObj = new();
 
-        public MessageConsumer(IOptions<RabbitMQConfiguration> options, 
+        private readonly List<IMessageEventHandlerService<TMessage>> _handlers;
+
+        public MessageConsumer(IOptions<RabbitMQConfiguration> options,
                                IServiceProvider services, 
-                               ILogger<MessageConsumer<TMessage>> logger,
+                               string exchange,
+                               string exchangeQueueRoutingKey,
                                string queueName) : base(options, services)
         {
-            _logger = logger;
-            _queueName = queueName;
+            Queue = queueName;
+            Exchange = exchange;
+            ExchangeQueueRoutingKey = exchangeQueueRoutingKey;
+            _handlers = new List<IMessageEventHandlerService<TMessage>>();
+            _handlers.AddRange(services.GetServices<IMessageEventHandlerService<TMessage>>());                        
         }
 
-        public async Task OnMessage()
+        public event EventHandler<TMessage>? OnMessageReceivedEvent;
+        public void AddMessageEventHandler(IMessageEventHandlerService<TMessage> handler)
+        {
+            lock (_syncHandlerObj)
+            {
+                _handlers.Add(handler);
+            }
+        }
+
+        public bool RemoveMessageEventHandler(IMessageEventHandlerService<TMessage> handler)
+        {
+            lock (_syncHandlerObj)
+            {
+                return _handlers.Remove(handler);
+            }
+        }
+
+        public async Task Subscribe()
         {
             try
             {
@@ -31,30 +54,57 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 
                 consumer.Received += async (model, eventArgs) =>
                 {
-                    //var body = Encoding.UTF8.GetString(eventArgs.Body.ToArray());
-                    //var message = JsonConvert.DeserializeObject(body);
-
                     var body = eventArgs.Body.ToArray();
                     var message = QueueMessage.GetQueueMessage<TMessage>(body);
-                    _logger.LogInformation(message.MessageId.ToString());
-                    Console.WriteLine(body);
-                    Console.WriteLine();
+                    Log.LogInformation("{message}",message?.MessageId.ToString());
 
-                    Console.WriteLine("On message event...");
+                    if (message != null) await OnMessage(message);
 
-                    Channel?.BasicAck(eventArgs.DeliveryTag, false);
+                    Channel?.BasicAck(eventArgs.DeliveryTag, true);
 
                     await Task.Yield();
                 };
 
-                string consumerTag = Channel.BasicConsume(_queueName, false, consumer);
+                var consumerTag = Channel?.BasicConsume(Queue, true, consumer);
 
                 await TaskCache.True;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error while consuming message from queue.");
+                Log.LogError(ex, $"Error while consuming message from queue.");
                 throw;
+            }
+
+            await TaskCache.True;
+        }
+
+        private async Task OnMessage(TMessage message)
+        {
+            IMessageEventHandlerService<TMessage>[]? all;
+            lock (_syncHandlerObj) 
+            {
+                all = _handlers.ToArray();
+            }
+
+            foreach (var handler in all)
+            {
+                try
+                {
+                    await handler.OnMessage(message, this);
+                }
+                catch (Exception ex)
+                {
+                    Log.LogError(ex, "OnMessage error. {errMsg}", ex.Message);
+                }
+            }
+
+            try
+            {
+                OnMessageReceivedEvent?.Invoke(this, message);
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex, "OnMessage error. {errMsg}", ex.Message);
             }
         }
     }
