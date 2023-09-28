@@ -17,6 +17,7 @@ var app = App.BuildServices((services, config) =>
                                                  getQueueName: () => config.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
 
     //AdminDSL Services
+    services.AddSqlConnOptions(config);
     services.AddAdminDSLParser();
     services.AddNodeVisitor();
     services.AddAdminDSLInterpreter();
@@ -25,6 +26,8 @@ var app = App.BuildServices((services, config) =>
     //MediatR
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateAdminDSLCommand>());
 });
+
+
 
 var mediator = app.Services.GetService<IMediator>();
 var consumerTest = new RabbitMQConsumerTest(app.Services.GetMessageConsumer<AdminDSLMessage>()!, mediator);

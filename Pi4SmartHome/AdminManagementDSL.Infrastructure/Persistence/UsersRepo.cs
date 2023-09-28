@@ -3,8 +3,8 @@ using AdminManagementDSL.Core.Configurations;
 using AdminManagementDSL.Core.Entities;
 using AdminManagementDSL.Infrastructure.Common.Helper;
 using Microsoft.Extensions.Options;
-using System.Data.SqlClient;
 using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace AdminManagementDSL.Infrastructure.Persistence
 {
@@ -110,24 +110,19 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
                 await cmd.ExecuteNonQueryAsync();
 
-                if ((int)outParam.Value == 0)
-                    return false;
-
-                return true;
+                return (int)outParam.Value != 0;
             }
         }
 
         public async Task<int> VerifyEmailAsync(string email)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
-            {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.Users_VerifyEmail", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Email", email);
-                conn.Open();
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Users_VerifyEmail", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Email", email);
+            conn.Open();
 
-                return await cmd.ExecuteNonQueryAsync();
-            }
+            return await cmd.ExecuteNonQueryAsync();
         }
 
         public async Task<int> UpdateUserSignInKeyAsync(string email, string signInKey)

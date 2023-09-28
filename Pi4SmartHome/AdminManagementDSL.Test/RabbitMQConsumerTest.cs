@@ -20,7 +20,9 @@ namespace AdminManagementDSL.Test
         }
 
         public async Task ReceiveMessage()
-        {          
+        {
+            MessageConsumer.AddMessageEventHandler(new AdminManagementDSLMsgHandler(_mediator));
+
             while (true) 
             {
                 try
@@ -29,7 +31,6 @@ namespace AdminManagementDSL.Test
                     {
                         await MessageConsumer.ConnectAsync();
                     }
-                    MessageConsumer.AddMessageEventHandler(new AdminManagementDSLMsgHandler(_mediator));
                     MessageConsumer.OnMessageReceivedEvent += OnMessage;
 
                     await MessageConsumer.Subscribe();
@@ -46,6 +47,7 @@ namespace AdminManagementDSL.Test
             Console.WriteLine("OnMessage in Consumer");
             Console.WriteLine($"Source code: {message.DslSourceCode}");
 
+            //generate message for end of the inserting process;
         }
     }
 }

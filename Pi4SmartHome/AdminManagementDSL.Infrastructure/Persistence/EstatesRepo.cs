@@ -2,8 +2,8 @@
 using AdminManagementDSL.Core.Configurations;
 using AdminManagementDSL.Core.Entities;
 using Microsoft.Extensions.Options;
-using System.Data.SqlClient;
 using System.Data;
+using Microsoft.Data.SqlClient;
 
 namespace AdminManagementDSL.Infrastructure.Persistence
 {

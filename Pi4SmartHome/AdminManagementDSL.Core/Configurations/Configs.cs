@@ -5,6 +5,6 @@ namespace AdminManagementDSL.Core.Configurations
     {
         public const string ConfigRoot = "adminManagementDSLService";
 
-        public const string SqlConfigRoot = "adminManagementDSLService:SqlDbConfig";
+        public const string SqlConfigRoot = $"{ConfigRoot}:SqlDbConfig";
     }
 }
