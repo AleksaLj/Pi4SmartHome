@@ -13,7 +13,6 @@ namespace AdminManagementWebApiService.Controllers
     {
         private readonly ILogger<AdminManagementDSLController> Log;
         protected IMessageProducer<AdminDSLMessage> MessageProducer { get; set; }
-        private readonly IMediator _mediator;
 
         public AdminManagementDSLController(ILogger<AdminManagementDSLController> log,
                                             IMessageProducer<AdminDSLMessage> messageProducer,
@@ -21,7 +20,6 @@ namespace AdminManagementWebApiService.Controllers
         {
             Log = log;
             MessageProducer = messageProducer;
-            _mediator = mediator;
         }
 
         [HttpPost]
@@ -68,7 +66,7 @@ namespace AdminManagementWebApiService.Controllers
 
         private static string PrepareMsg()
         {
-            string adminDSL = @"
+            var adminDSL = @"
                                     PI4SMARTHOMEADMIN.PROVISION
 
                                     BEGIN

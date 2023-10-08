@@ -13,7 +13,6 @@ namespace AdminManagementWebApi.Test.Controllers
     {
         private readonly ILogger<AdminManagementDSLController> Log;
         protected IMessageProducer<AdminDSLMessage> MessageProducer { get; set; }
-        private readonly IMediator _mediator;
 
         public AdminManagementDSLController(ILogger<AdminManagementDSLController> log, 
                                             IMessageProducer<AdminDSLMessage> messageProducer,
@@ -21,7 +20,6 @@ namespace AdminManagementWebApi.Test.Controllers
         {
             Log = log;
             MessageProducer = messageProducer;
-            _mediator = mediator;
         }
 
         [HttpPost]
