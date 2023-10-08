@@ -29,8 +29,8 @@ namespace AdminManagementWebApiService.Controllers
         {
             var resultModel = new ResultModel();
 
-            var json = PrepareJson();
-            model.DSLSourceCode = json;
+            var msg = PrepareMsg();
+            model.DSLSourceCode = msg;
 
             try
             {
@@ -66,7 +66,7 @@ namespace AdminManagementWebApiService.Controllers
             }
         }
 
-        private static string PrepareJson()
+        private static string PrepareMsg()
         {
             string adminDSL = @"
                                     PI4SMARTHOMEADMIN.PROVISION
@@ -88,10 +88,10 @@ namespace AdminManagementWebApiService.Controllers
                                     END
                                ";
 
-            var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
-            var json = JsonSerializer.Serialize<AdminManagementDSLModel>(model);
+            //var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
+            //var json = JsonSerializer.Serialize<AdminManagementDSLModel>(model);
 
-            return json;
+            return adminDSL;
         }
     }
 }

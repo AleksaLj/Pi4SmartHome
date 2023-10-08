@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdminManagementDSL.AdminDSL\AdminManagementDSL.AdminDSL.csproj" />
     <ProjectReference Include="..\AdminManagementDSL.Application\AdminManagementDSL.Application.csproj" />
   </ItemGroup>
 

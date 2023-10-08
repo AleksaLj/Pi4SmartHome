@@ -5,6 +5,6 @@ namespace AdminManagementDSL.AdminDSL.Common.Dto
     {
         public string TableName { get; set; } = null!;
         public string TableType { get; set; } = null!;
-        public List<SqlRowDto> Rows { get; set; } = new List<SqlRowDto>();
+        public List<SqlRowDto> Rows { get; set; } = new();
     }
 }

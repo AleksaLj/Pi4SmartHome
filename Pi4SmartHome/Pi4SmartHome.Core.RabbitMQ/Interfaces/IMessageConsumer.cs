@@ -1,4 +1,5 @@
 ﻿using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
+using RabbitMQ.Client.Events;
 
 namespace Pi4SmartHome.Core.RabbitMQ.Interfaces
 {
@@ -6,7 +7,7 @@ namespace Pi4SmartHome.Core.RabbitMQ.Interfaces
     {
         bool RemoveMessageEventHandler(IMessageEventHandlerService<TMessage> handler);
         void AddMessageEventHandler(IMessageEventHandlerService<TMessage> handler);
-        event EventHandler<TMessage>? OnMessageReceivedEvent;
+        event AsyncEventHandler<TMessage>? OnMessageReceivedEvent;
         Task Subscribe();
     }
 }

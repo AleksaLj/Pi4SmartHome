@@ -6,11 +6,11 @@ namespace AdminManagementDSL.Application.AdminDSL.Handlers
 {
     public class CreateAdminDSLHandler : IRequestHandler<CreateAdminDSLCommand, int>
     {
-        private readonly IAdminDSLRepo _adminDSLRepo;
+        private readonly IAdminDSLRepo _adminDslRepo;
 
         public CreateAdminDSLHandler(IAdminDSLRepo adminDslRepo)
         {
-            _adminDSLRepo = adminDslRepo;
+            _adminDslRepo = adminDslRepo;
         }
 
         public async Task<int> Handle(CreateAdminDSLCommand request, CancellationToken cancellationToken)
@@ -28,10 +28,11 @@ namespace AdminManagementDSL.Application.AdminDSL.Handlers
             var item = new Core.Entities.AdminDSL
             {
                 DSLCode = request.DslCode,
-                DSLStatus = (byte)request.Status
+                DSLStatus = (byte)request.Status,
+                AdminDSLGuid = request.DslGuid
             };
 
-            return await _adminDSLRepo.InsertAsync(item);
+            return await _adminDslRepo.InsertAsync(item);
         }
     }
 }

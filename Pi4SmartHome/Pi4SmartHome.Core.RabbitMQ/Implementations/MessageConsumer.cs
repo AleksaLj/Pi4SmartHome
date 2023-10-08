@@ -29,7 +29,7 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
             _handlers.AddRange(services.GetServices<IMessageEventHandlerService<TMessage>>());                        
         }
 
-        public event EventHandler<TMessage>? OnMessageReceivedEvent;
+        public event AsyncEventHandler<TMessage>? OnMessageReceivedEvent;
         public void AddMessageEventHandler(IMessageEventHandlerService<TMessage> handler)
         {
             lock (_syncHandlerObj)

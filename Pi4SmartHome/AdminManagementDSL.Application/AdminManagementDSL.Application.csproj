@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdminManagementDSL.AdminDSL\AdminManagementDSL.AdminDSL.csproj" />
     <ProjectReference Include="..\AdminManagementDSL.Core\AdminManagementDSL.Core.csproj" />
   </ItemGroup>
 

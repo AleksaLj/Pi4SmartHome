@@ -24,13 +24,15 @@ namespace AdminManagementDSL.AdminDSL.Interpreter.Visitor
             sqlTableDto.TableName = tableName!;
             sqlTableDto.TableType = tableType!;
 
-            foreach (var property in tableElementNode.PropertyNodes)
-            { 
-                var propertyNode = (PropertyNode)property;
-                var sqlColumn = new SqlColumnDto(propertyNode.PropertyName.TokenValue?.ToString()!);
-                var sqlRow = new SqlRowDto(sqlColumn, propertyNode.PropertyValue.TokenValue);
-                sqlTableDto.Rows.Add(sqlRow);
-            }
+            var columns = 
+                (
+                    from PropertyNode? propertyNode in tableElementNode.PropertyNodes 
+                    select new SqlColumnDto(Value: propertyNode.PropertyValue.TokenValue, Name: propertyNode.PropertyName.TokenValue?.ToString()!)
+                ).ToList();
+
+            var sqlRow = new SqlRowDto(columns);
+            sqlTableDto.Rows.Add(sqlRow);
+
             sqlTablesDto.Add(sqlTableDto);
 
             await TaskCache.True;

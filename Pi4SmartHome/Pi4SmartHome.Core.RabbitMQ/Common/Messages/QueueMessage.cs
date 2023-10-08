@@ -6,7 +6,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 namespace Pi4SmartHome.Core.RabbitMQ.Common.Messages
 {
     [Serializable]
-    public class QueueMessage : ISerializable
+    public class QueueMessage : EventArgs, ISerializable
     {
         public Guid MessageId { get; protected set; }
 

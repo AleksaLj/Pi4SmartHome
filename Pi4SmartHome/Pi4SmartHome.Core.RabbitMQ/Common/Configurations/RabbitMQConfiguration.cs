@@ -10,5 +10,8 @@ namespace Pi4SmartHome.Core.RabbitMQ.Configurations
         public string AdminManagementDSLExchangeName { get; set; } = null!;
         public string AdminManagementDSLQueueName { get; set; } = null!;
         public string AdminManagementDSLQueueRoutingKey { get; set; } = null!;
+        public string AdminManagementDSLEndExchangeName { get; set; } = null!;
+        public string AdminManagementDSLEndQueueName { get; set; } = null!;
+        public string AdminManagementDSLEndQueueRoutingKey { get; set; } = null!;
     }
 }

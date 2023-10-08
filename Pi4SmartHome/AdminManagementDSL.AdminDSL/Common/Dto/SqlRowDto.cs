@@ -1,5 +1,5 @@
 ﻿
 namespace AdminManagementDSL.AdminDSL.Common.Dto
 {
-    public record SqlRowDto(SqlColumnDto Column, object? Value);
+    public record SqlRowDto(IEnumerable<SqlColumnDto> Columns);
 }

@@ -1,5 +1,5 @@
 ﻿
 namespace AdminManagementDSL.AdminDSL.Common.Dto
 {
-    public record SqlColumnDto(string Name = null!);
+    public record SqlColumnDto(object? Value, string Name = null!);
 }

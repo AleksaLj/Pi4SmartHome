@@ -120,7 +120,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                 return new Token(TokenTypeEnum.TypeKeyword, identifierValue);
             }
 
-            if (identifierValue == ReservedKeywords.LogicalOperatorKeywords.Keyword_And)
+            if (identifierValue.IsIdentifierValueLogicalOperatorKeyword())
             {
                 return new Token(TokenTypeEnum.AND, identifierValue);
             }

@@ -25,122 +25,112 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
         public async Task<int> DeleteAsync(object id)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
-            {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.Estates_DeleteById", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EstateId", id);
-                conn.Open();
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Estates_DeleteById", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EstateId", id);
+            conn.Open();
 
-                var result = await cmd.ExecuteNonQueryAsync();
+            var result = await cmd.ExecuteNonQueryAsync();
 
-                return result;
-            }
+            return result;
         }
 
         public async Task<IEnumerable<Estates>> GetAllAsync()
         {
             var items = new List<Estates>();
 
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Estates_GetAll", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            conn.Open();
+
+            var rdr = await cmd.ExecuteReaderAsync();
+            while (rdr.Read())
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.Estates_GetAll", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                conn.Open();
-
-                SqlDataReader rdr = await cmd.ExecuteReaderAsync();
-                while (rdr.Read())
+                var item = new Estates
                 {
-                    var item = new Estates
-                    {
-                        EstateId = Convert.ToInt32(rdr["EstateId"]),
-                        Name = rdr["Name"].ToString()!,
-                        Addr = rdr["Addr"].ToString(),
-                        Description = rdr["Description"].ToString(),
-                        EstateTypeId = Convert.ToByte(rdr["EstateTypeId"])
-                    };
-                    items.Add(item);
-                }
-
-                return items;
+                    EstateId = Convert.ToInt32(rdr["EstateId"]),
+                    Name = rdr["Name"].ToString()!,
+                    Addr = rdr["Addr"].ToString(),
+                    Description = rdr["Description"].ToString(),
+                    EstateTypeId = Convert.ToByte(rdr["EstateTypeId"])
+                };
+                items.Add(item);
             }
+
+            return items;
         }
 
         public async Task<Estates?> GetByIdAsync(object id)
         {
             Estates? item = default(Estates);
 
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Estates_GetById", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EstateId", id);
+            conn.Open();
+
+            var rdr = await cmd.ExecuteReaderAsync();
+            while (rdr.Read())
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.Estates_GetById", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EstateId", id);
-                conn.Open();
-
-                SqlDataReader rdr = await cmd.ExecuteReaderAsync();
-                while (rdr.Read())
+                item = new Estates
                 {
-                    item = new Estates
-                    {
-                        EstateId = Convert.ToInt32(rdr["EstateId"]),
-                        Name = rdr["Name"].ToString()!,
-                        Addr = rdr["Addr"].ToString(),
-                        Description = rdr["Description"].ToString(),
-                        EstateTypeId = Convert.ToByte(rdr["EstateTypeId"])
-                    };
-                }
-
-                return item;
+                    EstateId = Convert.ToInt32(rdr["EstateId"]),
+                    Name = rdr["Name"].ToString()!,
+                    Addr = rdr["Addr"].ToString(),
+                    Description = rdr["Description"].ToString(),
+                    EstateTypeId = Convert.ToByte(rdr["EstateTypeId"])
+                };
             }
+
+            return item;
         }
 
         public async Task<int> InsertAsync(Estates item)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Estates_Insert", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Name", item.Name);
+            if (!string.IsNullOrEmpty(item.Addr))
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.Estates_Insert", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Name", item.Name);
-                if (!string.IsNullOrEmpty(item.Addr))
-                {
-                    cmd.Parameters.AddWithValue("@Addr", item.Addr);
-                }
-                if (!string.IsNullOrEmpty(item.Description))
-                {
-                    cmd.Parameters.AddWithValue("@Description", item.Description);
-                }
-                cmd.Parameters.AddWithValue("@EstateTypeId", item.EstateTypeId);
-                conn.Open();
-
-                var result = await cmd.ExecuteNonQueryAsync();
-
-                return result;
+                cmd.Parameters.AddWithValue("@Addr", item.Addr);
             }
+            if (!string.IsNullOrEmpty(item.Description))
+            {
+                cmd.Parameters.AddWithValue("@Description", item.Description);
+            }
+            cmd.Parameters.AddWithValue("@EstateTypeId", item.EstateTypeId);
+            conn.Open();
+
+            var result = await cmd.ExecuteNonQueryAsync();
+
+            return result;
         }
 
         public async Task<int> UpdateAsync(Estates item)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Estates_Update", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EstateId", item.EstateId);
+            cmd.Parameters.AddWithValue("@Name", item.Name);
+            if (!string.IsNullOrEmpty(item.Addr))
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.Estates_Update", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EstateId", item.EstateId);
-                cmd.Parameters.AddWithValue("@Name", item.Name);
-                if (!string.IsNullOrEmpty(item.Addr))
-                {
-                    cmd.Parameters.AddWithValue("@Addr", item.Addr);
-                }
-                if (!string.IsNullOrEmpty(item.Description))
-                {
-                    cmd.Parameters.AddWithValue("@Description", item.Description);
-                }
-                cmd.Parameters.AddWithValue("@EstateTypeId", item.EstateTypeId);
-                conn.Open();
-
-                var result = await cmd.ExecuteNonQueryAsync();
-
-                return result;
+                cmd.Parameters.AddWithValue("@Addr", item.Addr);
             }
+            if (!string.IsNullOrEmpty(item.Description))
+            {
+                cmd.Parameters.AddWithValue("@Description", item.Description);
+            }
+            cmd.Parameters.AddWithValue("@EstateTypeId", item.EstateTypeId);
+            conn.Open();
+
+            var result = await cmd.ExecuteNonQueryAsync();
+
+            return result;
         }
     }
 }

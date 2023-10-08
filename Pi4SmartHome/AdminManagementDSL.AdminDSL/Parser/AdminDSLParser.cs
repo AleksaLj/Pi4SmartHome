@@ -9,9 +9,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
     public class AdminDSLParser : IAdminDSLParser
     {
         private IAdminDSLScanner? _scanner;
-
-        public AdminDSLParser() { }
-
+        
         private async void SkipProcessedToken(TokenTypeEnum tokenType, string? reservedKeyword = null)
         {
             if (_scanner?.CurrentToken?.TokenType == tokenType &&

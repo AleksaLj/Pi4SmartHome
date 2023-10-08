@@ -29,8 +29,8 @@ namespace AdminManagementWebApi.Test.Controllers
         {
             var resultModel = new ResultModel();
 
-            var json = PrepareJson();
-            model.DSLSourceCode = json;
+            var msg = PrepareMsg();
+            model.DSLSourceCode = msg;
 
             try
             {
@@ -49,7 +49,7 @@ namespace AdminManagementWebApi.Test.Controllers
                     await MessageProducer.ConnectAsync();
                 }
 
-                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode);
+                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode, adminDslGuid: Guid.NewGuid());
                 await MessageProducer.SendMessageAsync(adminDslMsg);
 
                 return Ok(resultModel);
@@ -66,7 +66,7 @@ namespace AdminManagementWebApi.Test.Controllers
             }            
         }
 
-        private static string PrepareJson()
+        private static string PrepareMsg()
         {
             string adminDSL = @"
                                     PI4SMARTHOMEADMIN.PROVISION
@@ -77,21 +77,21 @@ namespace AdminManagementWebApi.Test.Controllers
 	                                    EstateType: FIELD = `Home` AND Name: FIELD = `testName` AND Addr: FIELD = `testAddr` AND Description: FIELD = `testDesc`;
 
 	                                    DEFINE ESTATE_USERS: TABLE
-	                                    Users: AGGR = `user1@gmail.com, user2@gmail.com, user3@gmail.com`;
+	                                    Users: AGGR = `aleksaljujic97@gmail.com, test@gmail.com`;
 
 	                                    DEFINE ESTATE_PARTS: TABLE
-	                                    EstateParts: AGGR = `Part1, Part2, Part3`;
+	                                    EstateParts: AGGR = `LivingRoom, Bedroom`;
 
 	                                    DEFINE ESTATE_DEVICES: TABLE
-	                                    DeviceType: FIELD = `devType1` AND IsActive: FIELD = `true` AND EstatePart: FIELD = `estatePart1`;
+	                                    DeviceType: FIELD = `LightSensor` AND IsActive: FIELD = `true` AND EstatePart: FIELD = `LivingRoom`;
                                     }
                                     END
                                ";
 
-            var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
-            var json = JsonSerializer.Serialize(model);
+            //var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
+            //var json = JsonSerializer.Serialize(model);
 
-            return json;
+            return adminDSL;
         }
     }
 }
