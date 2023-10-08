@@ -49,7 +49,7 @@ namespace AdminManagementWebApiService.Controllers
                     await MessageProducer.ConnectAsync();
                 }
 
-                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode);
+                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode, Guid.NewGuid());
                 await MessageProducer.SendMessageAsync(adminDslMsg);
 
                 return Ok(resultModel);
