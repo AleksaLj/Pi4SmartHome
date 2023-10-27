@@ -16,7 +16,9 @@ builder.Services.AddRabbitMQConfiguration(builder.Configuration);
 builder.Services.AddMessageProducer<AdminDSLMessage>(getExchangeName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLExchangeName").Value!,
                                                      getExchangeQueueRoutingKey: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueRoutingKey").Value!,
                                                      getQueueName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
+//TO DO : Uncomment if once this is needed for Web API project!
+//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 var app = builder.Build();
 

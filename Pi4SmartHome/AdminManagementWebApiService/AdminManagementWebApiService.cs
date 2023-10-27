@@ -1,4 +1,5 @@
 using System.Fabric;
+using System.Reflection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
@@ -47,9 +48,13 @@ namespace AdminManagementWebApiService
 
                         //add services
                         builder.Services.AddRabbitMQConfiguration(builder.Configuration);
+
                         builder.Services.AddMessageProducer<AdminDSLMessage>(getExchangeName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLExchangeName").Value!,
                             getExchangeQueueRoutingKey: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueRoutingKey").Value!,
                             getQueueName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
+
+                        //TO DO : Uncomment if once this is needed for Web API project!
+                        //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
                         var app = builder.Build();
                         
@@ -59,8 +64,10 @@ namespace AdminManagementWebApiService
                             app.UseSwagger();
                             app.UseSwaggerUI();
                         }
+
+                        app.UseHttpsRedirection();
                         
-                        app.UseAuthorization();
+                        //app.UseAuthorization();
                         
                         app.MapControllers();
                         

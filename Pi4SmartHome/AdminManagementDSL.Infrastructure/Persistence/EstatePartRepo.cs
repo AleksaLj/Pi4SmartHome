@@ -25,108 +25,103 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
         public async Task<int> DeleteAsync(object id)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
-            {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.EstatePart_DeleteById", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EstatePartId", id);
-                conn.Open();
+            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.EstatePart_DeleteById", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EstatePartId", id);
+            conn.Open();
 
-                var result = await cmd.ExecuteNonQueryAsync();
+            var result = await cmd.ExecuteNonQueryAsync();
 
-                return result;
-            }
+            return result;
         }
 
         public async Task<IEnumerable<EstatePart>> GetAllAsync()
         {
             var items = new List<EstatePart>();
 
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.EstatePart_GetAll", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            conn.Open();
+
+            var rdr = await cmd.ExecuteReaderAsync();
+            while (rdr.Read())
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.EstatePart_GetAll", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                conn.Open();
-
-                SqlDataReader rdr = await cmd.ExecuteReaderAsync();
-                while (rdr.Read())
+                var item = new EstatePart
                 {
-                    var item = new EstatePart
-                    {
-                        EstatePartId = Convert.ToInt32(rdr["EstatePartId"]),
-                        EstatePartName = rdr["EstatePartName"].ToString(),
-                        EstateId = Convert.ToInt32(rdr["EstateId"])
-                    };
-                    items.Add(item);
-                }
-
-                return items;
+                    EstatePartId = Convert.ToInt32(rdr["EstatePartId"]),
+                    EstatePartName = rdr["EstatePartName"].ToString(),
+                    EstateId = Convert.ToInt32(rdr["EstateId"])
+                };
+                items.Add(item);
             }
+
+            return items;
         }
 
         public async Task<EstatePart?> GetByIdAsync(object id)
         {
-            EstatePart? item = default(EstatePart);
+            var item = default(EstatePart);
 
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.EstatePart_GetById", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EstatePartId", id);
+            conn.Open();
+
+            var rdr = await cmd.ExecuteReaderAsync();
+            while (rdr.Read())
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.EstatePart_GetById", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EstatePartId", id);
-                conn.Open();
-
-                SqlDataReader rdr = await cmd.ExecuteReaderAsync();
-                while (rdr.Read())
+                item = new EstatePart
                 {
-                    item = new EstatePart
-                    {
-                        EstatePartId = Convert.ToInt32(rdr["EstatePartId"]),
-                        EstatePartName = rdr["EstatePartName"].ToString(),
-                        EstateId = Convert.ToInt32(rdr["EstateId"])
-                    };
-                }
-
-                return item;
+                    EstatePartId = Convert.ToInt32(rdr["EstatePartId"]),
+                    EstatePartName = rdr["EstatePartName"].ToString(),
+                    EstateId = Convert.ToInt32(rdr["EstateId"])
+                };
             }
+
+            return item;
         }
 
         public async Task<int> InsertAsync(EstatePart item)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.EstatePart_Insert", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            if (!string.IsNullOrEmpty(item.EstatePartName))
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.EstatePart_Insert", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                if (!string.IsNullOrEmpty(item.EstatePartName))
-                {
-                    cmd.Parameters.AddWithValue("@EstatePartName", item.EstatePartName);
-                }
-                cmd.Parameters.AddWithValue("@EstateId", item.EstateId);
-                conn.Open();
-
-                var result = await cmd.ExecuteNonQueryAsync();
-
-                return result;
+                cmd.Parameters.AddWithValue("@EstatePartName", item.EstatePartName);
             }
+            cmd.Parameters.AddWithValue("@EstateId", item.EstateId);
+            conn.Open();
+
+            var result = await cmd.ExecuteNonQueryAsync();
+
+            return result;
         }
 
         public async Task<int> UpdateAsync(EstatePart item)
         {
-            using (SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection))
+            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.EstatePart_Update", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@EstatePartId", item.EstatePartId);
+            if (!string.IsNullOrEmpty(item.EstatePartName))
             {
-                SqlCommand cmd = new SqlCommand("mgmtdsl.EstatePart_Update", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@EstatePartId", item.EstatePartId);
-                if (!string.IsNullOrEmpty(item.EstatePartName))
-                {
-                    cmd.Parameters.AddWithValue("@EstatePartName", item.EstatePartName);
-                }
-                cmd.Parameters.AddWithValue("@EstateId", item.EstateId);
-                conn.Open();
-
-                var result = await cmd.ExecuteNonQueryAsync();
-
-                return result;
+                cmd.Parameters.AddWithValue("@EstatePartName", item.EstatePartName);
             }
+            cmd.Parameters.AddWithValue("@EstateId", item.EstateId);
+            conn.Open();
+
+            var result = await cmd.ExecuteNonQueryAsync();
+
+            return result;
+        }
+
+        ~EstatePartRepo()
+        {
+            _sqlConnHandle?.Dispose();
         }
     }
 }

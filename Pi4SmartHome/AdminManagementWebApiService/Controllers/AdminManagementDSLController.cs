@@ -1,13 +1,11 @@
 ﻿using AdminManagementWebApiService.Models;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
-using System.Text.Json;
 
 namespace AdminManagementWebApiService.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AdminManagementDSLController : ControllerBase
     {
@@ -15,15 +13,14 @@ namespace AdminManagementWebApiService.Controllers
         protected IMessageProducer<AdminDSLMessage> MessageProducer { get; set; }
 
         public AdminManagementDSLController(ILogger<AdminManagementDSLController> log,
-                                            IMessageProducer<AdminDSLMessage> messageProducer,
-                                            IMediator mediator)
+                                            IMessageProducer<AdminDSLMessage> messageProducer)
         {
             Log = log;
             MessageProducer = messageProducer;
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveAdminManagementDSL([FromBody] AdminManagementDSLModel model)
+        public async Task<IActionResult> SaveAdminManagementDsl([FromBody] AdminManagementDSLModel model)
         {
             var resultModel = new ResultModel();
 
@@ -47,7 +44,7 @@ namespace AdminManagementWebApiService.Controllers
                     await MessageProducer.ConnectAsync();
                 }
 
-                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode, Guid.NewGuid());
+                var adminDslMsg = new AdminDSLMessage(model.DSLSourceCode, adminDslGuid: Guid.NewGuid());
                 await MessageProducer.SendMessageAsync(adminDslMsg);
 
                 return Ok(resultModel);
@@ -66,7 +63,7 @@ namespace AdminManagementWebApiService.Controllers
 
         private static string PrepareMsg()
         {
-            var adminDSL = @"
+            string adminDSL = @"
                                     PI4SMARTHOMEADMIN.PROVISION
 
                                     BEGIN
@@ -75,19 +72,19 @@ namespace AdminManagementWebApiService.Controllers
 	                                    EstateType: FIELD = `Home` AND Name: FIELD = `testName` AND Addr: FIELD = `testAddr` AND Description: FIELD = `testDesc`;
 
 	                                    DEFINE ESTATE_USERS: TABLE
-	                                    Users: AGGR = `user1@gmail.com, user2@gmail.com, user3@gmail.com`;
+	                                    Users: AGGR = `aleksaljujic97@gmail.com, test@gmail.com`;
 
 	                                    DEFINE ESTATE_PARTS: TABLE
-	                                    EstateParts: AGGR = `Part1, Part2, Part3`;
+	                                    EstateParts: AGGR = `LivingRoom, Bedroom`;
 
 	                                    DEFINE ESTATE_DEVICES: TABLE
-	                                    DeviceType: FIELD = `devType1` AND IsActive: FIELD = `true` AND EstatePart: FIELD = `estatePart1`;
+	                                    DeviceType: FIELD = `LightSensor` AND IsActive: FIELD = `true` AND EstatePart: FIELD = `LivingRoom`;
                                     }
                                     END
                                ";
 
             //var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
-            //var json = JsonSerializer.Serialize<AdminManagementDSLModel>(model);
+            //var json = JsonSerializer.Serialize(model);
 
             return adminDSL;
         }

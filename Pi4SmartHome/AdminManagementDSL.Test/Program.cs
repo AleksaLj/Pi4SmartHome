@@ -32,15 +32,33 @@ var app = App.BuildServices((services, config) =>
 });
 
 
+string? test = null;
+
+try
+{
+    Console.WriteLine(test.Length == 0 ? "true" : "false");
+}
+catch (NullReferenceException nre)
+    when (nre.Message == "Object reference not set to an instance of an object.")
+{
+    Console.WriteLine("NullReferenceException");
+    return;
+}
+catch(Exception e)
+{
+    Console.WriteLine(e);
+}
+
+
 
 var parser = app.Services.GetAdminDSLParser();
 var interpreter = app.Services.GetAdminDSLInterpreter();
 
 var mediator = app.Services.GetService<IMediator>();
 var consumerTest = new RabbitMQConsumerTest(app.Services.GetMessageConsumer<AdminDSLMessage>()!, 
-                                            mediator, 
-                                            parser, 
-                                            interpreter, 
+                                            mediator!, 
+                                            parser!, 
+                                            interpreter!, 
                                             app.Services.GetService<ILogger<AdminManagementDSLMsgHandler>>()!,
                                             app.Services.GetMessageProducer<AdminDSLInterpreterEndMessage>()!);
 await consumerTest.ReceiveMessage();

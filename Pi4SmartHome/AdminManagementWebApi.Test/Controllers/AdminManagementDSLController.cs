@@ -1,13 +1,11 @@
 ﻿using AdminManagementWebApi.Test.Models;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
-using System.Text.Json;
 
 namespace AdminManagementWebApi.Test.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AdminManagementDSLController : ControllerBase
     {
@@ -15,8 +13,7 @@ namespace AdminManagementWebApi.Test.Controllers
         protected IMessageProducer<AdminDSLMessage> MessageProducer { get; set; }
 
         public AdminManagementDSLController(ILogger<AdminManagementDSLController> log, 
-                                            IMessageProducer<AdminDSLMessage> messageProducer,
-                                            IMediator mediator)
+                                            IMessageProducer<AdminDSLMessage> messageProducer)
         {
             Log = log;
             MessageProducer = messageProducer;

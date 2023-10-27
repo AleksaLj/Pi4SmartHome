@@ -7,7 +7,7 @@ namespace AdminManagementDSL.Test
 {
     public class AppInstance
     {
-        readonly IHost _host;
+        private readonly IHost _host;
 
         public AppInstance(IHost host)
         {
@@ -18,7 +18,7 @@ namespace AdminManagementDSL.Test
         public IConfiguration? Configuration => _host.Services.GetService<IConfiguration>();
     }
 
-    static class App
+    internal static class App
     {
         public static AppInstance BuildServices(Action<IServiceCollection, IConfiguration> configure)
         {

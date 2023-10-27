@@ -5,22 +5,25 @@ namespace Pi4SmartHome.Core.Implementations
     public class DisposableObject : IDisposableObject
     {
         bool isDisposed = false;
-        bool IDisposableObject.IsDisposed => IsDisposed;
+        bool IDisposableObject.IsDisposed => isDisposed;
         protected bool IsDisposed => isDisposed;
 
         protected virtual void Dispose(bool disposing)
         {
+            if (isDisposed) return;
 
+            if (disposing)
+            {
+                //free managed code..
+            }
+
+            isDisposed = true;
         }
 
         public void Dispose()
         {
-            if (!isDisposed)
-            {
-                Dispose(true);
-                isDisposed = true;
-                GC.SuppressFinalize(this);
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~DisposableObject()

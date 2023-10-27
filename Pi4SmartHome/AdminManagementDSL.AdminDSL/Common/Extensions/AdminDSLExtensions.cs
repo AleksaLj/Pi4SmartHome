@@ -2,7 +2,6 @@
 using AdminManagementDSL.AdminDSL.Interpreter;
 using AdminManagementDSL.AdminDSL.Interpreter.Visitor;
 using AdminManagementDSL.AdminDSL.Parser;
-using AdminManagementDSL.AdminDSL.Scanner;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AdminManagementDSL.AdminDSL.Common.Extensions

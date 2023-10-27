@@ -1,25 +1,25 @@
-﻿using System.Text;
-using AdminManagementDSL.AdminDSL.Common.Dto;
+﻿using AdminManagementDSL.AdminDSL.Common.Dto;
 using AdminManagementDSL.AdminDSL.Common.Interfaces;
 using AdminManagementDSL.AdminDSL.Scanner;
-using AdminManagementDSL.Application.AdminDSL.Commands;
-using AdminManagementDSL.Application.AdminDSL.Queries;
-using AdminManagementDSL.Core.Enums;
+using AdminManagementDSL.Service.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
-using Pi4SmartHome.Core.RabbitMQ.Interfaces;
+using System.Text;
+using AdminManagementDSL.Application.AdminDSL.Commands;
+using AdminManagementDSL.Application.AdminDSL.Queries;
+using AdminManagementDSL.Core.Enums;
 
-namespace AdminManagementDSL.Test
+namespace AdminManagementDSL.Service.Implementations
 {
-    public class AdminManagementDSLMsgHandler : IMessageEventHandlerService<AdminDSLMessage>
+    public class AdminManagementDSLMsgHandler : IAdminManagementDSLMsgHandler
     {
         private readonly IMediator _mediator;
         private readonly IAdminDSLParser _parser;
         private readonly IAdminDSLInterpreter _interpreter;
         private readonly ILogger<AdminManagementDSLMsgHandler> _logger;
 
-        public AdminManagementDSLMsgHandler(IMediator mediator, 
+        public AdminManagementDSLMsgHandler(IMediator mediator,
                                             IAdminDSLParser parser,
                                             IAdminDSLInterpreter interpreter,
                                             ILogger<AdminManagementDSLMsgHandler> logger)
@@ -47,7 +47,7 @@ namespace AdminManagementDSL.Test
 
         private async Task InterpretAdminDSLMessage(int createdAdminDslId)
         {
-            var adminDsl = await GetAdminDslByIdAsync(createdAdminDslId) ?? 
+            var adminDsl = await GetAdminDslByIdAsync(createdAdminDslId) ??
                            throw new ArgumentNullException(nameof(createdAdminDslId));
             if (string.IsNullOrEmpty(adminDsl.DSLCode))
             {
@@ -97,10 +97,10 @@ namespace AdminManagementDSL.Test
 
         private async Task UpdateAdminDslStatusAsync(Core.Entities.AdminDSL? adminDsl, DSLStatus status)
         {
-            if(adminDsl == null)
+            if (adminDsl == null)
                 throw new ArgumentNullException(nameof(adminDsl));
 
-            if(adminDsl.DSLStatus == (byte)DSLStatus.Finished || adminDsl.DSLStatus == (byte)DSLStatus.Error)
+            if (adminDsl.DSLStatus == (byte)DSLStatus.Finished || adminDsl.DSLStatus == (byte)DSLStatus.Error)
                 return;
 
             var updateAdminDslStatusCommand = new UpdateAdminDSLStatusCommand

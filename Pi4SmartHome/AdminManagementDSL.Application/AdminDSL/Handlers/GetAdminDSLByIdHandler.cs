@@ -6,11 +6,11 @@ namespace AdminManagementDSL.Application.AdminDSL.Handlers
 {
     public class GetAdminDSLByIdHandler : IRequestHandler<GetAdminDSLByIdQuery, Core.Entities.AdminDSL?>
     {
-        private readonly IAdminDSLRepo _adminDSLRepo;
+        private readonly IAdminDSLRepo _adminDslRepo;
 
         public GetAdminDSLByIdHandler(IAdminDSLRepo adminDslRepo)
         {
-            _adminDSLRepo = adminDslRepo;
+            _adminDslRepo = adminDslRepo;
         }
 
         public async Task<Core.Entities.AdminDSL?> Handle(GetAdminDSLByIdQuery request, CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ namespace AdminManagementDSL.Application.AdminDSL.Handlers
                 throw new ArgumentException("Parameter 'Id' cannot be null or empty!");
             }
 
-            var item = await _adminDSLRepo.GetByIdAsync(request.Id);
+            var item = await _adminDslRepo.GetByIdAsync(request.Id);
 
             return item;
         }

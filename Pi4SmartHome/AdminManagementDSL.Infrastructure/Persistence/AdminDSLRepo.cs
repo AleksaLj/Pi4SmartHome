@@ -220,5 +220,10 @@ namespace AdminManagementDSL.Infrastructure.Persistence
             if(item == null) throw new ArgumentNullException(nameof(item));
             return item.Rows.Count != 0;
         }
+
+        ~AdminDSLRepo()
+        {
+            _sqlConnHandle?.Dispose();
+        }
     }
 }

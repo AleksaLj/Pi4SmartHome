@@ -132,5 +132,10 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
             return result;
         }
+
+        ~EstatesRepo()
+        {
+            _sqlConnHandle?.Dispose();
+        }
     }
 }

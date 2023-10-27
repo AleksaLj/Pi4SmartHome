@@ -7,10 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AdminManagementDSL.AdminDSL\AdminManagementDSL.AdminDSL.csproj" />
+    <ProjectReference Include="..\AdminManagementDSL.Application\AdminManagementDSL.Application.csproj" />
+    <ProjectReference Include="..\AdminManagementDSL.Core\AdminManagementDSL.Core.csproj" />
+    <ProjectReference Include="..\Pi4SmartHome.Core.RabbitMQ\Pi4SmartHome.Core.RabbitMQ.csproj" />
     <ProjectReference Include="..\Pi4SmartHome.Core\Pi4SmartHome.Core.csproj" />
   </ItemGroup>
 

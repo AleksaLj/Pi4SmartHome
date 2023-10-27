@@ -13,9 +13,21 @@ namespace AdminManagementDSL.Service.Extensions
             return services;
         }
 
+        public static IServiceCollection AdminManagementDslMsgHandler(this IServiceCollection services)
+        {
+            services.AddSingleton<IAdminManagementDSLMsgHandler, AdminManagementDSLMsgHandler>();
+
+            return services;
+        }
+
         public static IAdminManagementDSLService GetAdminManagementDSLService(this IServiceProvider services)
         {
             return services.GetService<IAdminManagementDSLService>()!;
+        }
+
+        public static IAdminManagementDSLMsgHandler GetAdminManagementDslMsgHandler(this IServiceProvider services)
+        {
+            return services.GetService<IAdminManagementDSLMsgHandler>()!;
         }
     }
 }

@@ -75,7 +75,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services.DeviceManagement",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommonLibs", "CommonLibs", "{AE06DCDF-9043-40F6-987F-523758843FD7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pi4SmartHomeDSL.Test", "Pi4SmartHomeDSL.Test\Pi4SmartHomeDSL.Test.csproj", "{D464C8CF-6215-4018-95BF-6BC07461814C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pi4SmartHomeDSL.Test", "Pi4SmartHomeDSL.Test\Pi4SmartHomeDSL.Test.csproj", "{D464C8CF-6215-4018-95BF-6BC07461814C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
