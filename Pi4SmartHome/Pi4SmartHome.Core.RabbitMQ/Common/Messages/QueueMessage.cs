@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Pi4SmartHome.Core.RabbitMQ.Common.Messages
 {

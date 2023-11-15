@@ -36,7 +36,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pi4SmartHomeDSLService\Pi4SmartHomeDSLService.csproj" />
+    <ProjectReference Include="..\CloudToDeviceService\CloudToDeviceService.csproj" />
+    <ProjectReference Include="..\Pi4SmartHomeWebApiService\Pi4SmartHomeWebApiService.csproj">
+      <ServiceLaunchUrl>http://localhost:{ServicePort}/swagger</ServiceLaunchUrl>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>

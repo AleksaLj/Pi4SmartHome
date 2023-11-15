@@ -1,25 +1,29 @@
-﻿using AdminManagementDSL.Service.Interfaces;
+﻿using AdminManagementDSL.Application.Device.Queries;
+using AdminManagementDSL.Service.Interfaces;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Pi4SmartHome.Core.Helper;
 using Pi4SmartHome.Core.Implementations;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
-using Pi4SmartHome.Core.RabbitMQ.Implementations;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
 
 namespace AdminManagementDSL.Service.Implementations
 {
     public class AdminManagementDSLService : ServiceFabricHostedServiceBase, IAdminManagementDSLService
     {
+        private readonly IMediator _mediator;
         private readonly IAdminManagementDSLMsgHandler _msgHandler;
-        private IMessageConsumer<AdminDSLMessage> _messageConsumer;
-        private IMessageProducer<AdminDSLInterpreterEndMessage> _messageProducer;
+        private readonly IMessageConsumer<AdminDSLMessage> _messageConsumer;
+        private readonly IMessageProducer<AdminDSLInterpreterEndMessage> _messageProducer;
 
         public AdminManagementDSLService(IServiceProvider serviceProvider, 
-                                         ILogger<AdminManagementDSLService> log, 
+                                         ILogger log, 
+                                         IMediator mediator,
                                          IAdminManagementDSLMsgHandler msgHandler, 
                                          IMessageConsumer<AdminDSLMessage> messageConsumer, 
                                          IMessageProducer<AdminDSLInterpreterEndMessage> messageProducer) : base(serviceProvider, log)
         {
+            _mediator = mediator;
             _msgHandler = msgHandler;
             _messageConsumer = messageConsumer;
             _messageProducer = messageProducer;
@@ -60,7 +64,7 @@ namespace AdminManagementDSL.Service.Implementations
             }
             catch (Exception ex)
             {
-               Log.LogError("Cannot process message.");
+               Log.LogError(ex, "Cannot process message. Error message: {0x1}", ex.Message);
             }
 
             Log.LogInformation($"Finished execution {nameof(AdminManagementDSLService)}.{nameof(OnRunAsync)}.");
@@ -68,10 +72,12 @@ namespace AdminManagementDSL.Service.Implementations
 
         private async Task OnMessage(object? sender, AdminDSLMessage message)
         {
-            //generate message for end of the inserting and interpreting AdminDsl Msg;
             var adminDslGuid = message.AdminDslGuid;
 
-            var adminDslInterpreterEndMsg = new AdminDSLInterpreterEndMessage(adminDslGuid);
+            var getDevicesForIoTHubQuery = new GetDevicesForIoTHubQuery(adminDslGuid.ToString());
+            var addIoTDeviceModels = await _mediator.Send(getDevicesForIoTHubQuery);
+
+            var adminDslInterpreterEndMsg = new AdminDSLInterpreterEndMessage(adminDslGuid, addIoTDeviceModels.Select(item => item.DeviceIoTHubId));
 
             if (!_messageProducer.IsConnected)
             {

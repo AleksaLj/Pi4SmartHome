@@ -31,7 +31,7 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
             {
                 lock (obj)
                 {
-                    return Connection != null && Connection.IsOpen == true;
+                    return Connection is { IsOpen: true };
                 }
             }
         }

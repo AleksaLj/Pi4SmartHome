@@ -10,8 +10,9 @@ using Pi4SmartHome.Core.RabbitMQ.Extensions;
 
 var app = App.BuildServices((services, config) => 
 {
-    //RabbitMQ Services
+    services.AddSqlConnOptions(config);
     services.AddRabbitMQConfiguration(config);
+
     services.AddMessageConsumer<AdminDSLMessage>(getExchangeName: () => config.GetSection("rabbitMQ:Configuration:AdminManagementDSLExchangeName").Value!,
                                                  getExchangeQueueRoutingKey: () => config.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueRoutingKey").Value!,
                                                  getQueueName: () => config.GetSection("rabbitMQ:Configuration:AdminManagementDSLQueueName").Value!);
@@ -20,36 +21,13 @@ var app = App.BuildServices((services, config) =>
         getExchangeQueueRoutingKey: () => config.GetSection("rabbitMQ:Configuration:AdminManagementDSLEndQueueRoutingKey").Value!,
         getQueueName: () => config.GetSection("rabbitMQ:Configuration:AdminManagementDSLEndQueueName").Value!);
 
-    //AdminDSL Services
-    services.AddSqlConnOptions(config);
     services.AddAdminDSLParser();
     services.AddNodeVisitor();
     services.AddAdminDSLInterpreter();
     services.AddAdminDslRepo();
 
-    //MediatR
     services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateAdminDSLCommand>());
 });
-
-
-string? test = null;
-
-try
-{
-    Console.WriteLine(test.Length == 0 ? "true" : "false");
-}
-catch (NullReferenceException nre)
-    when (nre.Message == "Object reference not set to an instance of an object.")
-{
-    Console.WriteLine("NullReferenceException");
-    return;
-}
-catch(Exception e)
-{
-    Console.WriteLine(e);
-}
-
-
 
 var parser = app.Services.GetAdminDSLParser();
 var interpreter = app.Services.GetAdminDSLInterpreter();

@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.DEV.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

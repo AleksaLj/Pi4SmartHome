@@ -19,7 +19,7 @@ namespace AdminManagementDSL.AdminDSL.Interpreter.Visitor
 
             var tableElements = compoundElement.TableElementNodes;
 
-            foreach ( var tableElement in tableElements ) 
+            foreach ( var tableElement in tableElements )
             {
                 await _visitor.Visit(tableElement, sqlTablesDto);
             }

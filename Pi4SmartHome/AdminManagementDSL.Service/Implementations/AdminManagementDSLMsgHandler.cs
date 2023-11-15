@@ -47,8 +47,8 @@ namespace AdminManagementDSL.Service.Implementations
 
         private async Task InterpretAdminDSLMessage(int createdAdminDslId)
         {
-            var adminDsl = await GetAdminDslByIdAsync(createdAdminDslId) ??
-                           throw new ArgumentNullException(nameof(createdAdminDslId));
+            var adminDsl = await GetAdminDslByIdAsync(createdAdminDslId) ?? throw new ArgumentNullException(nameof(createdAdminDslId));
+
             if (string.IsNullOrEmpty(adminDsl.DSLCode))
             {
                 throw new NullReferenceException(nameof(adminDsl.DSLCode));
@@ -77,8 +77,7 @@ namespace AdminManagementDSL.Service.Implementations
 
         private async Task<bool> CreatePi4SmartHomeInterpredDataAsync(IEnumerable<SqlTableDto> sqlTables, int adminDslId)
         {
-            var createPi4SmartHomeInterpretedDataCommand =
-                new CreatePi4SmartHomeInterpretedDataCommand(SqlTables: sqlTables, AdminDslId: adminDslId);
+            var createPi4SmartHomeInterpretedDataCommand = new CreatePi4SmartHomeInterpretedDataCommand(SqlTables: sqlTables, AdminDslId: adminDslId);
 
             var result = await _mediator.Send(createPi4SmartHomeInterpretedDataCommand);
 
@@ -100,7 +99,7 @@ namespace AdminManagementDSL.Service.Implementations
             if (adminDsl == null)
                 throw new ArgumentNullException(nameof(adminDsl));
 
-            if (adminDsl.DSLStatus == (byte)DSLStatus.Finished || adminDsl.DSLStatus == (byte)DSLStatus.Error)
+            if (adminDsl.DSLStatus is (byte)DSLStatus.Finished or (byte)DSLStatus.Error)
                 return;
 
             var updateAdminDslStatusCommand = new UpdateAdminDSLStatusCommand
@@ -112,7 +111,7 @@ namespace AdminManagementDSL.Service.Implementations
             await _mediator.Send(updateAdminDslStatusCommand);
         }
 
-        private string GetAdminDslCodeFromJson(string adminDslJson)
+        private static string GetAdminDslCodeFromJson(string adminDslJson)
         {
             var adminDslBuilder = new StringBuilder(adminDslJson);
 

@@ -5,6 +5,7 @@ using AdminManagementDSL.Infrastructure.Common.Helper;
 using Microsoft.Extensions.Options;
 using System.Data;
 using Microsoft.Data.SqlClient;
+using AdminManagementDSL.Application.Common.Models;
 
 namespace AdminManagementDSL.Infrastructure.Persistence
 {
@@ -41,7 +42,7 @@ namespace AdminManagementDSL.Infrastructure.Persistence
         {
             var items = new List<Devices>();
 
-            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
             var cmd = new SqlCommand("mgmtdsl.Devices_GetAll", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             conn.Open();
@@ -93,9 +94,32 @@ namespace AdminManagementDSL.Infrastructure.Persistence
             return item;
         }
 
+        public async Task<IEnumerable<AddIoTDeviceModel>> GetDevicesForIoTHubImportAsync(string adminDslGuid)
+        {
+            var items = new List<AddIoTDeviceModel>();
+
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            var cmd = new SqlCommand("mgmtdsl.Devices_GetForIoTHubImport", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@AdminDslGuid", adminDslGuid);
+            conn.Open();
+
+            var rdr = await cmd.ExecuteReaderAsync();
+            while (rdr.Read())
+            {
+                var item = new AddIoTDeviceModel
+                {
+                    DeviceIoTHubId = rdr["DeviceIoTHubId"].ToString()!
+                };
+                items.Add(item);
+            }
+
+            return items;
+        }
+
         public async Task<int> InsertAsync(Devices item)
         {
-            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
             var cmd = new SqlCommand("mgmtdsl.Devices_Insert", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@IsActive", item.IsActive);
@@ -122,7 +146,7 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
         public async Task<int> UpdateAsync(Devices item)
         {
-            await using SqlConnection conn = new SqlConnection(SqlConnOptions.SqlConnection);
+            await using var conn = new SqlConnection(SqlConnOptions.SqlConnection);
             var cmd = new SqlCommand("mgmtdsl.Devices_Update", conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@DeviceId", item.DeviceId);

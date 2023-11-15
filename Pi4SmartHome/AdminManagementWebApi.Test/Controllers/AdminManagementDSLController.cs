@@ -24,8 +24,8 @@ namespace AdminManagementWebApi.Test.Controllers
         {
             var resultModel = new ResultModel();
 
-            var msg = PrepareMsg();
-            model.DSLSourceCode = msg;
+            var adminDslMsgExample = GetAdminDslMsgExample();
+            model.DSLSourceCode = adminDslMsgExample;
 
             try
             {
@@ -61,9 +61,9 @@ namespace AdminManagementWebApi.Test.Controllers
             }            
         }
 
-        private static string PrepareMsg()
+        private static string GetAdminDslMsgExample()
         {
-            string adminDSL = @"
+            var adminDSL = @"
                                     PI4SMARTHOMEADMIN.PROVISION
 
                                     BEGIN
@@ -82,9 +82,6 @@ namespace AdminManagementWebApi.Test.Controllers
                                     }
                                     END
                                ";
-
-            //var model = new AdminManagementDSLModel { DSLSourceCode = adminDSL };
-            //var json = JsonSerializer.Serialize(model);
 
             return adminDSL;
         }

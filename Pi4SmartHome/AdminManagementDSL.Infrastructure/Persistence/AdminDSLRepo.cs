@@ -3,7 +3,6 @@ using AdminManagementDSL.AdminDSL.Common.Core;
 using AdminManagementDSL.AdminDSL.Common.Dto;
 using AdminManagementDSL.Application.Common.Interfaces;
 using AdminManagementDSL.Core.Configurations;
-using AdminManagementDSL.Core.Entities;
 using AdminManagementDSL.Core.Enums;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
@@ -123,9 +122,9 @@ namespace AdminManagementDSL.Infrastructure.Persistence
             }
         }
 
-        private async Task<int> InsertEstatesInterpretedDataAsync(SqlTableDto estate, int adminDslId)
+        private async Task InsertEstatesInterpretedDataAsync(SqlTableDto estate, int adminDslId)
         {
-            if(!ValidateInputParams(estate)) return default;
+            if(!ValidateInputParams(estate)) return;
 
             await using var conn = new SqlConnection(_sqlConnOptions.SqlConnection);
             SqlCommand cmd = new("mgmtdsl.Estates_Insert", conn);
@@ -148,12 +147,12 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
             conn.Open();
 
-            return await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
 
-        private async Task<int> EstatePartsBulkInsertInterpretedDataAsync(SqlTableDto estatePart, int adminDslId)
+        private async Task EstatePartsBulkInsertInterpretedDataAsync(SqlTableDto estatePart, int adminDslId)
         {
-            if (!ValidateInputParams(estatePart)) return default;
+            if (!ValidateInputParams(estatePart)) return;
 
             await using var conn = new SqlConnection(_sqlConnOptions.SqlConnection);
             SqlCommand cmd = new("mgmtdsl.EstatePart_BulkInsert", conn);
@@ -167,12 +166,12 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
             conn.Open();
 
-            return await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
 
-        private async Task<int> DevicesBulkInsertInterpretedDataAsync(SqlTableDto device, int adminDslId)
+        private async Task DevicesBulkInsertInterpretedDataAsync(SqlTableDto device, int adminDslId)
         {
-            if (!ValidateInputParams(device)) return default;
+            if (!ValidateInputParams(device)) return;
 
             await using var conn = new SqlConnection(_sqlConnOptions.SqlConnection);
             SqlCommand cmd = new("mgmtdsl.Devices_BulkInsert", conn);
@@ -186,19 +185,20 @@ namespace AdminManagementDSL.Infrastructure.Persistence
                 .FirstOrDefault(q => q.Name == ReservedKeywords.PropertyKeywords.Keyword_EstatePart);
 
             cmd.Parameters.AddWithValue("@IsActive", (string?)isActiveCol?.Value == "true" ? "T" : "F");
-            cmd.Parameters.AddWithValue("@TimeActivated", DateTime.UtcNow);
+            cmd.Parameters.AddWithValue("@CreatedDate", DateTime.UtcNow);
             cmd.Parameters.AddWithValue("@EstatePartName", estatePartCol?.Value);
             cmd.Parameters.AddWithValue("@DeviceTypeName", deviceTypeCol?.Value);
             cmd.Parameters.AddWithValue("@AdminDslId", adminDslId);
+            cmd.Parameters.AddWithValue("@DeviceIoTStatus", (byte)DeviceIoTStatus.Disconnected);
 
             conn.Open();
 
-            return await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
 
-        private async Task<int> EstateUsersBulkInsertInterpretedDataAsync(SqlTableDto device, int adminDslId)
+        private async Task EstateUsersBulkInsertInterpretedDataAsync(SqlTableDto device, int adminDslId)
         {
-            if (!ValidateInputParams(device)) return default;
+            if (!ValidateInputParams(device)) return;
 
             await using var conn = new SqlConnection(_sqlConnOptions.SqlConnection);
             SqlCommand cmd = new("mgmtdsl.EstateUsers_BulkInsert", conn);
@@ -212,7 +212,7 @@ namespace AdminManagementDSL.Infrastructure.Persistence
 
             conn.Open();
 
-            return await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
 
         private static bool ValidateInputParams(SqlTableDto item)

@@ -9,24 +9,14 @@ namespace AdminManagementDSL.AdminDSL.Interpreter.Visitor
     {
         public Task Visit(AST node, List<SqlTableDto> sqlTablesDto)
         {
-            if (node is ProgramNode)
+            return node switch
             {
-                return node.Accept(new ProgramNodeVisitor(this), sqlTablesDto);
-            }
-            if (node is ProvisionMainNode)
-            {
-                return node.Accept(new ProvisionMainNodeVisitor(this), sqlTablesDto);
-            }
-            if (node is CompoundElementNode)
-            {
-                return node.Accept(new CompoundElementNodeVisitor(this), sqlTablesDto);
-            }
-            if (node is TableElementNode)
-            {
-                return node.Accept(new TableElementNodeVisitor(this), sqlTablesDto);
-            }
-
-            throw Error.ErrorMessages.NonexistentVisitorMethodErr();
+                ProgramNode => node.Accept(new ProgramNodeVisitor(this), sqlTablesDto),
+                ProvisionMainNode => node.Accept(new ProvisionMainNodeVisitor(this), sqlTablesDto),
+                CompoundElementNode => node.Accept(new CompoundElementNodeVisitor(this), sqlTablesDto),
+                TableElementNode => node.Accept(new TableElementNodeVisitor(this), sqlTablesDto),
+                _ => throw Error.ErrorMessages.NonexistentVisitorMethodErr()
+            };
         }
     }
 }

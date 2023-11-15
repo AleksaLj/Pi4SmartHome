@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace Pi4SmartHomeDSLService
+namespace CloudToDeviceService
 {
-    [EventSource(Name = "MyCompany-Pi4SmartHome.SF-Pi4SmartHomeDSLService")]
+    [EventSource(Name = "MyCompany-Pi4SmartHome.SF-CloudToDeviceService")]
 internal sealed class ServiceEventSource : EventSource
 {
     public static readonly ServiceEventSource Current = new ServiceEventSource();

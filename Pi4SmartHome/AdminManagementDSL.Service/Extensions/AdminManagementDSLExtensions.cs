@@ -24,10 +24,5 @@ namespace AdminManagementDSL.Service.Extensions
         {
             return services.GetService<IAdminManagementDSLService>()!;
         }
-
-        public static IAdminManagementDSLMsgHandler GetAdminManagementDslMsgHandler(this IServiceProvider services)
-        {
-            return services.GetService<IAdminManagementDSLMsgHandler>()!;
-        }
     }
 }

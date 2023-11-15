@@ -100,7 +100,7 @@ namespace AdminManagementDSL.Test
             if(adminDsl == null)
                 throw new ArgumentNullException(nameof(adminDsl));
 
-            if(adminDsl.DSLStatus == (byte)DSLStatus.Finished || adminDsl.DSLStatus == (byte)DSLStatus.Error)
+            if(adminDsl.DSLStatus is (byte)DSLStatus.Finished or (byte)DSLStatus.Error)
                 return;
 
             var updateAdminDslStatusCommand = new UpdateAdminDSLStatusCommand
@@ -112,7 +112,7 @@ namespace AdminManagementDSL.Test
             await _mediator.Send(updateAdminDslStatusCommand);
         }
 
-        private string GetAdminDslCodeFromJson(string adminDslJson)
+        private static string GetAdminDslCodeFromJson(string adminDslJson)
         {
             var adminDslBuilder = new StringBuilder(adminDslJson);
 

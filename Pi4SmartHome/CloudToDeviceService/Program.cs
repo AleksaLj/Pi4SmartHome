@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ServiceFabric.Services.Runtime;
 
-namespace Pi4SmartHomeDSLService
+namespace CloudToDeviceService
 {
     internal static class Program
     {
@@ -21,10 +21,10 @@ namespace Pi4SmartHomeDSLService
                 // When Service Fabric creates an instance of this service type,
                 // an instance of the class is created in this host process.
 
-                ServiceRuntime.RegisterServiceAsync("Pi4SmartHomeDSLServiceType",
-                    context => new Pi4SmartHomeDSLService(context)).GetAwaiter().GetResult();
+                ServiceRuntime.RegisterServiceAsync("CloudToDeviceServiceType",
+                    context => new CloudToDeviceService(context)).GetAwaiter().GetResult();
 
-                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(Pi4SmartHomeDSLService).Name);
+                ServiceEventSource.Current.ServiceTypeRegistered(Process.GetCurrentProcess().Id, typeof(CloudToDeviceService).Name);
 
                 // Prevents this host process from terminating so services keep running.
                 Thread.Sleep(Timeout.Infinite);

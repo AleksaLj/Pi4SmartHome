@@ -1,11 +1,9 @@
-﻿using Pi4SmartHome.Core.Helper;
-using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
+﻿using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
-using RabbitMQ.Client.Events;
-using System.Threading;
 using MediatR;
 using AdminManagementDSL.AdminDSL.Common.Interfaces;
 using Microsoft.Extensions.Logging;
+using AdminManagementDSL.Application.Device.Queries;
 
 namespace AdminManagementDSL.Test
 {
@@ -58,10 +56,12 @@ namespace AdminManagementDSL.Test
 
         private async Task OnMessage(object? sender, AdminDSLMessage message)
         {
-            //generate message for end of the inserting process;
             var adminDslGuid = message.AdminDslGuid;
 
-            var adminDslInterpreterEndMsg = new AdminDSLInterpreterEndMessage(adminDslGuid);
+            var getDevicesForIoTHubQuery = new GetDevicesForIoTHubQuery(adminDslGuid.ToString());
+            var addIoTDeviceModels = await _mediator.Send(getDevicesForIoTHubQuery);
+
+            var adminDslInterpreterEndMsg = new AdminDSLInterpreterEndMessage(adminDslGuid, addIoTDeviceModels?.Select(item => item.DeviceIoTHubId));
 
             if (!MessageProducer.IsConnected)
             {

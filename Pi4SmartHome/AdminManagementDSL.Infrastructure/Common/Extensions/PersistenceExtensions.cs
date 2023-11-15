@@ -49,35 +49,5 @@ namespace AdminManagementDSL.Infrastructure.Common.Extensions
 
             return services;
         }
-
-        public static IUsersRepo? GetUsersRepo(this IServiceProvider provider)
-        {
-            return provider.GetService<IUsersRepo>();
-        }
-
-        public static IDevicesRepo? GetDevicesRepo(this IServiceProvider provider)
-        {
-            return provider.GetService<IDevicesRepo>();
-        }
-
-        public static IEstatesRepo? GetEstatesRepo(this IServiceProvider provider)
-        {
-            return provider.GetService<IEstatesRepo>();
-        }
-
-        public static IEstatePartRepo? GetEstatePartRepo(this IServiceProvider provider)
-        {
-            return provider.GetService<IEstatePartRepo>();
-        }
-
-        public static IAdminDSLRepo? GetAdminDslRepo(this IServiceProvider provider)
-        {
-            return provider.GetService<IAdminDSLRepo>();
-        }
-
-        public static SqlConnectionOptions? GetSqlConnOptions(this IConfiguration configuration)
-        {
-            return configuration.GetSection(Configs.SqlConfigRoot).Get<SqlConnectionOptions>();
-        }
     }
 }

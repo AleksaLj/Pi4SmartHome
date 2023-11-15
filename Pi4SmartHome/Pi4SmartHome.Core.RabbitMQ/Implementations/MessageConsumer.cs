@@ -60,18 +60,18 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 
                     if (message != null) await OnMessage(message);
 
-                    Channel?.BasicAck(eventArgs.DeliveryTag, true); //TO DO : REVISIT THIS PARAMETER true/false
+                    Channel?.BasicAck(eventArgs.DeliveryTag, false);
 
                     await Task.Yield();
                 };
 
-                var consumerTag = Channel?.BasicConsume(Queue, true, consumer); //TO DO : REVISIT THIS PARAMETER true/false
+                Channel?.BasicConsume(Queue, false, consumer);
 
                 await TaskCache.True;
             }
             catch (Exception ex)
             {
-                Log.LogError(ex, $"Error while consuming message from queue.");
+                Log.LogError(ex, "Error while consuming message from queue.");
                 throw;
             }
 

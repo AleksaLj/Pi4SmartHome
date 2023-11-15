@@ -26,7 +26,7 @@ namespace AdminManagementDSL.Test
                 .ConfigureAppConfiguration((_, config) =>
                 {
                     config.SetBasePath(Directory.GetCurrentDirectory());
-                    config.AddJsonFile("appsettings.DEV.json", optional: false, reloadOnChange: true);
+                    config.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
                 })
                 .ConfigureLogging((hostContext, loggingBuilder) =>
                 {

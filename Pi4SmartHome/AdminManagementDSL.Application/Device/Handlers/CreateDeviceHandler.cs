@@ -15,8 +15,6 @@ namespace AdminManagementDSL.Application.Device.Handlers
 
         public async Task<int> Handle(CreateDeviceCommand request, CancellationToken cancellationToken)
         {
-            //pre-checks and validations;
-
             var item = new Devices
             {
                 IsActive = request.IsActive,

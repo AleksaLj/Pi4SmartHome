@@ -11,6 +11,11 @@ namespace AdminManagementDSL.Core.Entities
 
         public DateTime? TimeDeactivated { get; set; }
 
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public byte DeviceIoTStatus { get; set; }
+        public Guid DeviceGuid { get; set; }
+
         public int EstateId { get; set; }
 
         public int? EstatePartId { get; set; }
