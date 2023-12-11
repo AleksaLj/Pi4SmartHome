@@ -12,5 +12,12 @@ namespace DeviceManagement.Infrastructure.Common.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddDeviceMessagingService(this IServiceCollection services)
+        {
+            services.AddTransient<IIoTHubCloudToDeviceMessagingService, IoTHubCloudToDeviceMessagingService>();
+
+            return services;
+        }
     }
 }

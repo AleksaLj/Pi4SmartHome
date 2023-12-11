@@ -12,7 +12,7 @@ namespace DeviceManagement.Infrastructure.IoTHubDeviceService
         private readonly IDisposable? _iotHubConnHandle;
         private IoTHubConnectionOptions _ioTHubConnection;
         private readonly RegistryManager _registryManager;
-        private ILogger<IoTHubDeviceProvisioningService> _logger;
+        private readonly ILogger<IoTHubDeviceProvisioningService> _logger;
 
         public IoTHubDeviceProvisioningService(IOptionsMonitor<IoTHubConnectionOptions> ioTHubConnection, ILogger<IoTHubDeviceProvisioningService> logger)
         {
@@ -35,15 +35,16 @@ namespace DeviceManagement.Infrastructure.IoTHubDeviceService
             {
                 var addedDevice = await AddDeviceAsync(deviceId);
 
-                items.Add(addedDevice);
+                if(addedDevice != null)
+                    items.Add(addedDevice);
             }
 
             return items;
         }
 
-        private async Task<Device> AddDeviceAsync(string deviceId)
+        private async Task<Device?> AddDeviceAsync(string deviceId)
         {
-            Device device;
+            Device? device;
 
             try
             {
@@ -54,7 +55,11 @@ namespace DeviceManagement.Infrastructure.IoTHubDeviceService
             }
             catch (DeviceAlreadyExistsException)
             {
-                device = await _registryManager.GetDeviceAsync(deviceId);
+                var existingDevice = await _registryManager.GetDeviceAsync(deviceId);
+
+                Console.WriteLine($"Device already created: {existingDevice.Authentication.SymmetricKey}");
+
+                device = default;
             }
             catch (Exception ex)
             {

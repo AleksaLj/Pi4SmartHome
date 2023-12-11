@@ -74,8 +74,8 @@ namespace DeviceManagement.Infrastructure.Persistence
 
             dt.Columns.Add("DeviceStatus", typeof(byte));
             dt.Columns.Add("ConnectionState", typeof(byte));
-            dt.Columns.Add("ActivationDate", typeof(DateTime?));
-            dt.Columns.Add("DeactivationDate", typeof(DateTime?));
+            dt.Columns.Add("ActivationDate", typeof(DateTime));
+            dt.Columns.Add("DeactivationDate", typeof(DateTime));
             dt.Columns.Add("IoTHubDeviceName", typeof(string));
 
             foreach (var item in items)

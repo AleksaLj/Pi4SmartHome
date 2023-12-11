@@ -1,4 +1,6 @@
-﻿using DeviceManagement.Infrastructure.Common.Extensions;
+﻿using DeviceManagement.Application.Interfaces;
+using DeviceManagement.Application.Models;
+using DeviceManagement.Infrastructure.Common.Extensions;
 using DeviceManagement.Service.Extensions;
 using DeviceManagement.Service.Implementations;
 using DeviceManagement.Service.Interfaces;
@@ -23,10 +25,16 @@ var app = App.BuildServices((services, config) =>
     services.AddDeviceManagementService();
     services.AddAdminDslInterpreterEndMsgHandler();
     services.AddDeviceProvisioningService();
+    services.AddDeviceMessagingService();
 });
 
 
 var deviceManagementTest = new DeviceManagementTest();
 
-deviceManagementTest.TestDeviceManagement(app.Services);
+//await deviceManagementTest.TestDeviceManagement(app.Services);
+
+var messagingService = app.Services.GetService<IIoTHubCloudToDeviceMessagingService>();
+
+await messagingService!.SendMessageToDeviceAsync(new IoTDeviceMessage
+    ("test-device-1", "test", new Dictionary<string, string>()));
 
