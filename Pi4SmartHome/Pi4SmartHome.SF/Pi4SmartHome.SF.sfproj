@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CloudToDeviceService\CloudToDeviceService.csproj" />
+    <ProjectReference Include="..\DeviceManagementService\DeviceManagementService.csproj" />
     <ProjectReference Include="..\Pi4SmartHomeWebApiService\Pi4SmartHomeWebApiService.csproj">
       <ServiceLaunchUrl>http://localhost:{ServicePort}/swagger</ServiceLaunchUrl>
     </ProjectReference>

@@ -1,0 +1,8 @@
+﻿SEND DEVICE MESSAGE
+To: 'test-device-1'
+MessageBody: 'Hello test-device-1!'
+MessageProperties:
+BEGIN
+	Prop1 = 'text',
+	Prop2 = 'text'
+END
