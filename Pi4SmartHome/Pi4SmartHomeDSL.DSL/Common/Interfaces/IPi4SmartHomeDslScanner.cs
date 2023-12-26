@@ -2,7 +2,7 @@
 
 namespace Pi4SmartHomeDSL.DSL.Common.Interfaces
 {
-    public interface IAdminDSLScanner
+    public interface IPi4SmartHomeDslScanner
     {
         Task Configure(string programCode);
         Token? CurrentToken { get; set; }

@@ -24,9 +24,9 @@ namespace AdminManagementDSL.AdminDSL.Parser
         }
 
         //property_value: (a-zA-Z0-9\s)+ | (([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])) | NULL
-        private bool IsValidEmails(string? propertyValue = null)
+        private static bool IsValidEmails(string? propertyValue = null)
         {
-            var emailRegex = new Regex("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
+            var emailRegex = new Regex(@"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
 
             if (propertyValue == null)
             {
@@ -44,9 +44,9 @@ namespace AdminManagementDSL.AdminDSL.Parser
             return true;
         }
         
-        private bool IsPropertyValueValid(string? propertyValue = null)
+        private static bool IsPropertyValueValid(string? propertyValue = null)
         {
-            var propertyValueRegex = new Regex("^\\b(?:\\w|-)+\\b$");
+            var propertyValueRegex = new Regex("^\\b(?:\\w|\\s|-|!)+\\b$");
             
             if (propertyValue == null)
             {
@@ -225,7 +225,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
                 throw Error.ErrorMessages.InvalidSyntaxErr();
             }
 
-            return TaskCache.ObjectValue<AST>(root);
+            return TaskCache.ObjectValue(root)!;
         }        
     }
 }

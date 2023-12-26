@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHome.Core.RabbitMQ.Extensions;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
+using Pi4SmartHomeDSL.DSL.Common.Extensions;
+using Pi4SmartHomeDSL.DSL.Common.Interfaces;
 
 var app = App.BuildServices((services, config) =>
 {
@@ -26,8 +28,14 @@ var app = App.BuildServices((services, config) =>
     services.AddAdminDslInterpreterEndMsgHandler();
     services.AddDeviceProvisioningService();
     services.AddDeviceMessagingService();
+
+    services.AddPi4SmartHomeDslScanner();
+    services.AddPi4SmartHomeDslParser();
 });
 
+
+var parser = app.Services.GetService<IPi4SmartHomeDslParser>();
+await Pi4SmartHomeDslTest.Pi4SmartHomeDslExampleTest(parser);
 
 var deviceManagementTest = new DeviceManagementTest();
 

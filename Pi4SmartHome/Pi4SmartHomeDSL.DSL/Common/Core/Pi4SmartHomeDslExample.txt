@@ -1,8 +1,18 @@
-﻿SEND DEVICE MESSAGE
-To: 'test-device-1'
-MessageBody: 'Hello test-device-1!'
+﻿SEND_DEVICE_MESSAGE
+To: `test-device-1`
+MessageBody: `Hello test-device-1!`
 MessageProperties:
 BEGIN
-	Prop1 = 'text',
-	Prop2 = 'text'
+	Prop1 = `text`,
+	Prop2 = `text`
 END
+
+
+program: SEND_DEVICE_MESSAGE message_structure
+message_structure: to_el message_body_el message_properties_el
+to_el: To COLON prop_val
+message_body_el: MessageBody COLON prop_val
+message_properties_el: MessageProperties COLON BEGIN message_props END
+message_props: ident_val | ident_val COMMA
+prop_val: ^\\b(?:\\w|\\s|-|!)+\\b$
+ident_val: ^\\b(?:\\w|\\s|-|!)+\\b$

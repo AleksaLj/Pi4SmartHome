@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Exceptions\" />
-    <Folder Include="Interpreter\" />
-    <Folder Include="Parser\" />
-    <Folder Include="Scanner\" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pi4SmartHome.Core\Pi4SmartHome.Core.csproj" />
   </ItemGroup>
 
 </Project>

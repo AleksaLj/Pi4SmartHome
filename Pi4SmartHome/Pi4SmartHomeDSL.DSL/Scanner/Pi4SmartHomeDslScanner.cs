@@ -1,16 +1,16 @@
-﻿using AdminManagementDSL.AdminDSL.Common.Core;
-using AdminManagementDSL.AdminDSL.Common.Exceptions;
-using AdminManagementDSL.AdminDSL.Common.Extensions;
-using AdminManagementDSL.AdminDSL.Common.Interfaces;
-using Pi4SmartHome.Core.Helper;
+﻿using Pi4SmartHome.Core.Helper;
+using Pi4SmartHomeDSL.DSL.Common.Core;
+using Pi4SmartHomeDSL.DSL.Common.Interfaces;
 using System.Text;
+using Pi4SmartHomeDSL.DSL.Common.Exceptions;
+using Pi4SmartHomeDSL.DSL.Common.Extensions;
 
-namespace AdminManagementDSL.AdminDSL.Scanner
+namespace Pi4SmartHomeDSL.DSL.Scanner
 {
-    public class AdminDSLScanner : IAdminDSLScanner
+    public class Pi4SmartHomeDslScanner : IPi4SmartHomeDslScanner
     {
         public string ProgramCode { get; set; } = string.Empty;
-        public Token? CurrentToken { get;  set; }
+        public Token? CurrentToken { get; set; }
         public int Position { get; set; }
         public char CurrentChar { get; set; }
 
@@ -31,13 +31,6 @@ namespace AdminManagementDSL.AdminDSL.Scanner
             CurrentChar = Position > ProgramCode.Length - 1 ? default : ProgramCode[Position];
         }
 
-        private char Peek(int peekNumber)
-        {
-            var peekPosition = Position + peekNumber;
-
-            return peekPosition > ProgramCode.Length - 1 ? default : ProgramCode[peekPosition];
-        }
-
         private Task SkipWhiteSpaces()
         {
             while (CurrentChar is ' ' or '\r' or '\n' or '\t')
@@ -50,16 +43,9 @@ namespace AdminManagementDSL.AdminDSL.Scanner
 
         private bool ShouldContinueReadingPropertyValue()
         {
-            return CurrentChar != '`'
-                   || (CurrentChar == '`' 
-                       && Peek(1) != default(char) 
-                       && Peek(1) != ' ' 
-                       && Peek(1) != '\r' 
-                       && Peek(1) != '\n'
-                       && Peek(1) != '\t'
-                       && Peek(1) != ';');
-        }        
-        
+            return CurrentChar != '`';
+        }
+
         private string ReadPropertyValue()
         {
             StringBuilder propertyValue = new();
@@ -80,7 +66,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                    && CurrentChar != '\r'
                    && CurrentChar != '\n'
                    && CurrentChar != '\t'
-                   && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '.' || CurrentChar == '_');
+                   && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '-' || CurrentChar == '_');
         }
 
         private string ReadIdentifierValue()
@@ -88,7 +74,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
             var identifierValue = new StringBuilder();
 
             while (ShouldContinueReadingIdentifierValue())
-            { 
+            {
                 identifierValue.Append(CurrentChar);
                 PositionUp();
             }
@@ -100,32 +86,17 @@ namespace AdminManagementDSL.AdminDSL.Scanner
         {
             var identifierValue = ReadIdentifierValue();
 
-            if (identifierValue.IsIdentifierValueAdminDSLKeyword())
+            if (identifierValue.IsIdentifierValuePi4SmartHomeKeyword())
             {
-                return new Token(TokenTypeEnum.AdminDSLKeyword, identifierValue);
+                return new Token(TokenTypeEnum.Pi4SmartHomeDslKeyword, identifierValue);
             }
 
             if (identifierValue.IsIdentifierValuePropertyKeyword())
             {
-                return new Token(TokenTypeEnum.PropertyKeyword, identifierValue);
+                return new Token(TokenTypeEnum.MessagePropertyKeyword, identifierValue);
             }
 
-            if (identifierValue.IsIdentifierValueTableKeyword())
-            {
-                return new Token(TokenTypeEnum.TableKeyword, identifierValue);
-            }
-
-            if (identifierValue.IsIdentifierValueTypeKeyword())
-            {
-                return new Token(TokenTypeEnum.TypeKeyword, identifierValue);
-            }
-
-            if (identifierValue.IsIdentifierValueLogicalOperatorKeyword())
-            {
-                return new Token(TokenTypeEnum.AND, identifierValue);
-            }
-
-            throw Error.ErrorMessages.UnkownIdentifierTokenErr();
+            return new Token(TokenTypeEnum.PROPERTY_NAME, identifierValue);
         }
 
         public async Task<Token?> GetNextToken()
@@ -138,7 +109,7 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                 {
                     PositionUp();
                     var propertyValue = ReadPropertyValue();
-                    var token = new Token(TokenTypeEnum.PROPERTY, propertyValue);
+                    var token = new Token(TokenTypeEnum.PROPERTY_VAL, propertyValue);
 
                     return await TaskCache.ObjectValue(token);
                 }
@@ -151,33 +122,17 @@ namespace AdminManagementDSL.AdminDSL.Scanner
                     return await TaskCache.ObjectValue(token);
                 }
 
-                if(CurrentChar == '=')
+                if (CurrentChar == '=')
                 {
-                    var token = new Token(TokenTypeEnum.ASSIGN, '=');
+                    var token = new Token(TokenTypeEnum.ASSIGN, CurrentChar);
                     PositionUp();
 
                     return await TaskCache.ObjectValue(token);
                 }
 
-                if (CurrentChar == ';')
+                if (CurrentChar == ',')
                 {
-                    var token = new Token(TokenTypeEnum.SEMI, ';');
-                    PositionUp();
-
-                    return await TaskCache.ObjectValue(token);
-                }
-
-                if(CurrentChar == '{')
-                {
-                    var token = new Token(TokenTypeEnum.LCurlyBracket, '{');
-                    PositionUp();
-
-                    return await TaskCache.ObjectValue(token);
-                }
-
-                if (CurrentChar == '}')
-                {
-                    var token = new Token(TokenTypeEnum.RCurlyBracket, '}');
+                    var token = new Token(TokenTypeEnum.COMMA, CurrentChar);
                     PositionUp();
 
                     return await TaskCache.ObjectValue(token);

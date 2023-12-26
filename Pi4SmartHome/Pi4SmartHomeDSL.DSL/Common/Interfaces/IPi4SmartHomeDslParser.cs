@@ -2,8 +2,8 @@
 
 namespace Pi4SmartHomeDSL.DSL.Common.Interfaces
 {
-    public interface IAdminDSLParser
+    public interface IPi4SmartHomeDslParser
     {
-        Task<AST> Parse(IAdminDSLScanner scanner);
+        Task<AST> Parse(IPi4SmartHomeDslScanner scanner);
     }
 }

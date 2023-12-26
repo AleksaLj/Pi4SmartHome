@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,6 +19,7 @@
     <ProjectReference Include="..\DeviceManagement.Infrastructure\DeviceManagement.Infrastructure.csproj" />
     <ProjectReference Include="..\DeviceManagement.Service\DeviceManagement.Service.csproj" />
     <ProjectReference Include="..\Pi4SmartHome.Core.RabbitMQ\Pi4SmartHome.Core.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Pi4SmartHomeDSL.DSL\Pi4SmartHomeDSL.DSL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

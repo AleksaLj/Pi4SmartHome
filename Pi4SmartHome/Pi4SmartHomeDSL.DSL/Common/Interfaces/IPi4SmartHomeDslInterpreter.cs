@@ -2,7 +2,7 @@
 
 namespace Pi4SmartHomeDSL.DSL.Common.Interfaces
 {
-    public interface IAdminDSLInterpreter
+    public interface IPi4SmartHomeDslInterpreter
     {
         Task Interpret(AST tree);
     }
