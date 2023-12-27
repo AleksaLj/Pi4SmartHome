@@ -31,11 +31,14 @@ var app = App.BuildServices((services, config) =>
 
     services.AddPi4SmartHomeDslScanner();
     services.AddPi4SmartHomeDslParser();
+    services.AddPi4SmartHomeDslInterpreter();
+    services.AddNodeVisitor();
 });
 
 
 var parser = app.Services.GetService<IPi4SmartHomeDslParser>();
-await Pi4SmartHomeDslTest.Pi4SmartHomeDslExampleTest(parser);
+var interpreter = app.Services.GetService<IPi4SmartHomeDslInterpreter>();
+await Pi4SmartHomeDslTest.Pi4SmartHomeDslExampleTest(parser, interpreter);
 
 var deviceManagementTest = new DeviceManagementTest();
 

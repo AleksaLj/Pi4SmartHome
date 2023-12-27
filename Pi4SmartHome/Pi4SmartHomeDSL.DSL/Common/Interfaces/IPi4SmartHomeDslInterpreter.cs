@@ -1,9 +1,10 @@
-﻿using Pi4SmartHomeDSL.DSL.Common.Core;
+﻿using DeviceManagement.Application.Models;
+using Pi4SmartHomeDSL.DSL.Common.Core;
 
 namespace Pi4SmartHomeDSL.DSL.Common.Interfaces
 {
     public interface IPi4SmartHomeDslInterpreter
     {
-        Task Interpret(AST tree);
+        Task<IoTDeviceMessage> Interpret(AST tree);
     }
 }

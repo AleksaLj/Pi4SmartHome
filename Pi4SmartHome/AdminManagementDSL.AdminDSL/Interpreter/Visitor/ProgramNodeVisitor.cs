@@ -18,6 +18,6 @@ namespace AdminManagementDSL.AdminDSL.Interpreter.Visitor
             var program = (ProgramNode)node;
 
             await _visitor.Visit(program.ProvisionMainTree, sqlTablesDto);
-        }
+;        }
     }
 }

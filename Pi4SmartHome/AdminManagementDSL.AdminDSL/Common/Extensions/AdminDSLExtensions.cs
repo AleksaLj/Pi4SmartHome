@@ -34,11 +34,6 @@ namespace AdminManagementDSL.AdminDSL.Common.Extensions
             return services.GetService<IAdminDSLParser>();
         }
 
-        public static INodeVisitor? GetNodeVisitor(this IServiceProvider services)
-        {
-            return services.GetService<INodeVisitor>();
-        }
-
         public static IAdminDSLInterpreter? GetAdminDSLInterpreter(this IServiceProvider services)
         {
             return services.GetService<IAdminDSLInterpreter>();

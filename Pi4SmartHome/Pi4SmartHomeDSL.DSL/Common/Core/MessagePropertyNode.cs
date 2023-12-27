@@ -1,4 +1,5 @@
-﻿using Pi4SmartHomeDSL.DSL.Common.Interfaces;
+﻿using DeviceManagement.Application.Models;
+using Pi4SmartHomeDSL.DSL.Common.Interfaces;
 
 namespace Pi4SmartHomeDSL.DSL.Common.Core
 {
@@ -13,6 +14,6 @@ namespace Pi4SmartHomeDSL.DSL.Common.Core
             PropertyValue = propertyValue;
         }
 
-        public override async Task Accept(INodeVisitor visitor) => await visitor.Visit(this);
+        public override async Task<IoTDeviceMessage> Accept(INodeVisitor visitor) => await visitor.Visit(this);
     }
 }
