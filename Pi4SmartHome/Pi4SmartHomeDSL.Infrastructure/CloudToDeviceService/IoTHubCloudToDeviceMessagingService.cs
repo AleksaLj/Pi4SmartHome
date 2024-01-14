@@ -1,20 +1,22 @@
-﻿using DeviceManagement.Application.Interfaces;
-using DeviceManagement.Application.Models;
-using DeviceManagement.Core.Configurations;
-using Microsoft.Azure.Devices;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Pi4SmartHomeDSL.Application.Interfaces;
+using Pi4SmartHomeDSL.Application.Models;
+using Pi4SmartHomeDSL.Core.Configurations;
+using Microsoft.Azure.Devices;
 
-namespace DeviceManagement.Infrastructure.IoTHubDeviceService
+namespace Pi4SmartHomeDSL.Infrastructure.CloudToDeviceService
 {
     public class IoTHubCloudToDeviceMessagingService : IIoTHubCloudToDeviceMessagingService
     {
+        private readonly ILogger<IoTHubCloudToDeviceMessagingService> _logger;
         private readonly IDisposable? _iotHubConnHandle;
         private IoTHubConnectionOptions _ioTHubConnection;
         private readonly ServiceClient _serviceClient;
 
-        public IoTHubCloudToDeviceMessagingService(IOptionsMonitor<IoTHubConnectionOptions> ioTHubConnection, ILogger<IoTHubDeviceProvisioningService> logger)
+        public IoTHubCloudToDeviceMessagingService(IOptionsMonitor<IoTHubConnectionOptions> ioTHubConnection, ILogger<IoTHubCloudToDeviceMessagingService> logger)
         {
+            _logger = logger;
             _ioTHubConnection = ioTHubConnection.CurrentValue;
             _iotHubConnHandle = ioTHubConnection.OnChange(OnIoTHubConnectionChange);
             _serviceClient = ServiceClient.CreateFromConnectionString(_ioTHubConnection.IoTHubConnectionString);
@@ -38,6 +40,11 @@ namespace DeviceManagement.Infrastructure.IoTHubDeviceService
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        ~IoTHubCloudToDeviceMessagingService()
+        {
+            _iotHubConnHandle?.Dispose();
         }
     }
 }

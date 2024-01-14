@@ -6,11 +6,11 @@ using Pi4SmartHome.Core.RabbitMQ.Configurations;
 using Pi4SmartHome.Core.RabbitMQ.Implementations;
 using Pi4SmartHome.Core.RabbitMQ.Interfaces;
 
-namespace Pi4SmartHome.Core.RabbitMQ.Extensions
+namespace Pi4SmartHome.Core.RabbitMQ.Common.Extensions
 {
     public static class RabbitMQExtensions
     {
-        private const string RABBITMQ_CONFIG_ROOT = $"rabbitMQ:Configuration";
+        private const string RABBITMQ_CONFIG_ROOT = "rabbitMQ:Configuration";
 
         public static IServiceCollection AddRabbitMQConfiguration(this IServiceCollection services, IConfiguration config)
         {
@@ -24,14 +24,12 @@ namespace Pi4SmartHome.Core.RabbitMQ.Extensions
                                                                            Func<string> getExchangeQueueRoutingKey,
                                                                            Func<string> getQueueName) where TMessage : QueueMessage
         {
-            services.AddSingleton(typeof(IMessageProducer<TMessage>), (srv) =>
-            {
-                return new MessageProducer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
-                                                     srv,
-                                                     exchange: getExchangeName(),
-                                                     exchangeQueueRoutingKey: getExchangeQueueRoutingKey(),
-                                                     queue: getQueueName());
-            });
+            services.AddSingleton(typeof(IMessageProducer<TMessage>), (srv) => 
+                new MessageProducer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
+                srv,
+                exchange: getExchangeName(),
+                exchangeQueueRoutingKey: getExchangeQueueRoutingKey(),
+                queue: getQueueName()));
 
             return services;
         }
@@ -42,20 +40,13 @@ namespace Pi4SmartHome.Core.RabbitMQ.Extensions
                                                                       Func<string> getQueueName) where TMessage : QueueMessage
         {
             services.AddSingleton(typeof(IMessageConsumer<TMessage>), (srv) => 
-            {
-                return new MessageConsumer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
-                                                     srv,
-                                                     exchange: getExchangeName(),
-                                                     exchangeQueueRoutingKey: getExchangeQueueRoutingKey(),
-                                                     queueName: getQueueName());
-            });
+                new MessageConsumer<TMessage>(srv.GetService<IOptions<RabbitMQConfiguration>>()!,
+                srv,
+                exchange: getExchangeName(),
+                exchangeQueueRoutingKey: getExchangeQueueRoutingKey(),
+                queueName: getQueueName()));
 
             return services;
-        }
-
-        public static RabbitMQConfiguration GetRabbitMQConfiguration(this IConfiguration config)
-        {
-            return config.GetSection(RABBITMQ_CONFIG_ROOT).Get<RabbitMQConfiguration>()!;
         }
 
         public static IMessageProducer<TMessage>? GetMessageProducer<TMessage>(this IServiceProvider services) where TMessage : QueueMessage

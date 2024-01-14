@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DeviceManagement.Application\DeviceManagement.Application.csproj" />
     <ProjectReference Include="..\Pi4SmartHome.Core\Pi4SmartHome.Core.csproj" />
+    <ProjectReference Include="..\Pi4SmartHomeDSL.Application\Pi4SmartHomeDSL.Application.csproj" />
   </ItemGroup>
 
 </Project>

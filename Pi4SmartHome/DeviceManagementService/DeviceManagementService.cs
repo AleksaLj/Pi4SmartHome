@@ -1,11 +1,15 @@
-using System;
-using System.Collections.Generic;
 using System.Fabric;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using DeviceManagement.Infrastructure.Common.Extensions;
+using DeviceManagement.Service.Extensions;
+using DeviceManagement.Service.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
+using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
+using Pi4SmartHome.Core.RabbitMQ.Common.Extensions;
 
 namespace DeviceManagementService
 {
@@ -14,9 +18,24 @@ namespace DeviceManagementService
     /// </summary>
     internal sealed class DeviceManagementService : StatelessService
     {
+        private IHost _serviceHost = null!;
+        private IDeviceManagementService? _deviceManagementService;
+        private ILogger? _log;
+
+        private IServiceProvider Services => _serviceHost.Services;
+
+        private IDeviceManagementService GetDeviceManagementService()
+        {
+            _deviceManagementService ??= Services.GetDeviceManagementService();
+
+            return _deviceManagementService;
+        }
+
         public DeviceManagementService(StatelessServiceContext context)
             : base(context)
         { }
+
+        private ILogger? Log => _log ??= Services.GetService<ILogger<DeviceManagementService>>();
 
         /// <summary>
         /// Optional override to create listeners (e.g., TCP, HTTP) for this service replica to handle client or user requests.
@@ -24,6 +43,44 @@ namespace DeviceManagementService
         /// <returns>A collection of listeners.</returns>
         protected override IEnumerable<ServiceInstanceListener> CreateServiceInstanceListeners()
         {
+            var environment = FabricRuntime.GetActivationContext()?
+                .GetConfigurationPackageObject("Config")?
+                .Settings.Sections["Environment"]?
+                .Parameters["ASPNETCORE_ENVIRONMENT"]?.Value;
+
+            _serviceHost = new HostBuilder()
+               .UseEnvironment(environment)
+               .ConfigureAppConfiguration((_, config) =>
+               {
+                   config.SetBasePath(
+                       Context.CodePackageActivationContext.GetConfigurationPackageObject("Config").Path);
+                   config.AddJsonFile($"appsettings.{environment}.json", optional: false, reloadOnChange: true);
+               })
+               .ConfigureLogging((hostContext, configLogging) =>
+               {
+                   configLogging.AddDebug();
+               })
+               .ConfigureServices((hostContext, services) =>
+               {
+                   var configuration = hostContext.Configuration;
+
+                   services.AddSingleton(configuration);
+
+                   services.AddSqlConnOptions(configuration);
+                   services.AddIoTHubConnection(configuration);
+
+                   services.AddMessageConsumer<AdminDSLInterpreterEndMessage>(getExchangeName: () => configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLEndExchangeName").Value!,
+                       getExchangeQueueRoutingKey: () => configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLEndQueueRoutingKey").Value!,
+                       getQueueName: () => configuration.GetSection("rabbitMQ:Configuration:AdminManagementDSLEndQueueName").Value!);
+
+                   services.AddIoTDeviceRepo();
+
+                   services.AddDeviceManagementService();
+                   services.AddAdminDslInterpreterEndMsgHandler();
+                   services.AddDeviceProvisioningService();
+               })
+               .Build();
+
             return new ServiceInstanceListener[0];
         }
 
@@ -36,15 +93,21 @@ namespace DeviceManagementService
             // TODO: Replace the following sample code with your own logic 
             //       or remove this RunAsync override if it's not needed in your service.
 
-            long iterations = 0;
-
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", ++iterations);
+                try
+                {
+                    await GetDeviceManagementService().RunAsync(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    ServiceEventSource.Current.Message($"Error:{ex.Message}");
+                    Log?.LogError(ex, $"Error in {nameof(DeviceManagementService)}:{ex.Message}");
+                }
 
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
             }
         }
     }

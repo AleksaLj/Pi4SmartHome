@@ -49,7 +49,7 @@ namespace AdminManagementDSL.Test
                 }
                 catch (Exception ex)
                 {
-                    await Console.Out.WriteLineAsync(ex.Message);
+                    _logger.LogError(ex.Message);
                 }                
             }            
         }
@@ -61,7 +61,7 @@ namespace AdminManagementDSL.Test
             var getDevicesForIoTHubQuery = new GetDevicesForIoTHubQuery(adminDslGuid.ToString());
             var addIoTDeviceModels = await _mediator.Send(getDevicesForIoTHubQuery);
 
-            var adminDslInterpreterEndMsg = new AdminDSLInterpreterEndMessage(adminDslGuid, addIoTDeviceModels?.Select(item => item.DeviceIoTHubId));
+            var adminDslInterpreterEndMsg = new AdminDSLInterpreterEndMessage(adminDslGuid, addIoTDeviceModels.Select(item => item.DeviceIoTHubId));
 
             if (!MessageProducer.IsConnected)
             {

@@ -1,4 +1,4 @@
-﻿using DeviceManagement.Application.Models;
+﻿using Pi4SmartHomeDSL.Application.Models;
 using Pi4SmartHomeDSL.DSL.Common.Interfaces;
 
 namespace Pi4SmartHomeDSL.DSL.Common.Core

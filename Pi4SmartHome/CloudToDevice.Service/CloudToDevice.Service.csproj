@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Pi4SmartHome.Core.RabbitMQ\Pi4SmartHome.Core.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Pi4SmartHome.Core\Pi4SmartHome.Core.csproj" />
+    <ProjectReference Include="..\Pi4SmartHomeDSL.DSL\Pi4SmartHomeDSL.DSL.csproj" />
+  </ItemGroup>
+
+</Project>

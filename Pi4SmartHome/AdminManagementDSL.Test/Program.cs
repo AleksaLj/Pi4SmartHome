@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
-using Pi4SmartHome.Core.RabbitMQ.Extensions;
+using Pi4SmartHome.Core.RabbitMQ.Common.Extensions;
 
 var app = App.BuildServices((services, config) => 
 {

@@ -60,7 +60,7 @@ namespace Pi4SmartHome.Core.RabbitMQ.Implementations
 
                     if (message != null) await OnMessage(message);
 
-                    Channel?.BasicAck(eventArgs.DeliveryTag, false);
+                    Channel?.BasicAck(eventArgs.DeliveryTag, true);
 
                     await Task.Yield();
                 };

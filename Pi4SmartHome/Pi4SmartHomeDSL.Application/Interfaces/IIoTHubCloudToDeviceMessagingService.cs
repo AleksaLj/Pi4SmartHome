@@ -1,6 +1,6 @@
-﻿using DeviceManagement.Application.Models;
+﻿using Pi4SmartHomeDSL.Application.Models;
 
-namespace DeviceManagement.Application.Interfaces
+namespace Pi4SmartHomeDSL.Application.Interfaces
 {
     public interface IIoTHubCloudToDeviceMessagingService
     {

@@ -1,5 +1,5 @@
 using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
-using Pi4SmartHome.Core.RabbitMQ.Extensions;
+using Pi4SmartHome.Core.RabbitMQ.Common.Extensions;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -2,10 +2,7 @@
 <StartupServices xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="DeviceManagementService_InstanceCount" Value="-1" />
-    <Parameter Name="Stateless1_InstanceCount" Value="-1" />
     <Parameter Name="Pi4SmartHomeWebApiService_InstanceCount" Value="-1" />
     <Parameter Name="CloudToDeviceService_InstanceCount" Value="-1" />
-    <Parameter Name="Stateless1_InstanceCount" Value="-1" />
-    <Parameter Name="Pi4SmartHomeDSLService_InstanceCount" Value="-1" />
   </Parameters>
 </StartupServices>

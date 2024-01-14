@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace DeviceManagement.Application.Models
+namespace Pi4SmartHomeDSL.Application.Models
 {
     [Serializable]
     public class IoTDeviceMessage : ISerializable
@@ -11,9 +11,9 @@ namespace DeviceManagement.Application.Models
         public string? MessageBody { get; set; }
         public Dictionary<string, string> MessageProperties { get; set; }
 
-        public IoTDeviceMessage(string deviceId, 
-                                string? messageBody, 
-                                Dictionary<string, string> messageProperties)
+        public IoTDeviceMessage(string deviceId,
+            string? messageBody,
+            Dictionary<string, string> messageProperties)
         {
             DeviceId = deviceId;
             MessageBody = messageBody;

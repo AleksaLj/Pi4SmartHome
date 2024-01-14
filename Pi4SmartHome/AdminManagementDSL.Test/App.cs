@@ -34,7 +34,7 @@ namespace AdminManagementDSL.Test
                 })
                 .ConfigureServices((host, services) => 
                 {
-                    configure?.Invoke(services, host.Configuration);
+                    configure.Invoke(services, host.Configuration);
                 })
                 .Build();
 

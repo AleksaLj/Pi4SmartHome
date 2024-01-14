@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pi4SmartHomeDSL.Test
 {
-    internal class Program
+    public class Program
     {
     }
 }

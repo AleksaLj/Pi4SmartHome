@@ -36,5 +36,15 @@ namespace Pi4SmartHomeDSL.DSL.Common.Extensions
 
             return services;
         }
+
+        public static IPi4SmartHomeDslParser GetPi4SmartHomeDslParser(this IServiceProvider services)
+        {
+            return services.GetService<IPi4SmartHomeDslParser>()!;
+        }
+
+        public static IPi4SmartHomeDslInterpreter GetPi4SmartHomeDslInterpreter(this IServiceProvider services)
+        {
+            return services.GetService<IPi4SmartHomeDslInterpreter>()!;
+        }
     }
 }
