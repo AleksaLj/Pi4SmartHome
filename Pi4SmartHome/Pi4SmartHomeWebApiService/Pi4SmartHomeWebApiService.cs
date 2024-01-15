@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Fabric;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 using Microsoft.ServiceFabric.Services.Communication.Runtime;
 using Microsoft.ServiceFabric.Services.Runtime;
-using Microsoft.ServiceFabric.Data;
+using Pi4SmartHome.Core.RabbitMQ.Common.Extensions;
+using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 
 namespace Pi4SmartHomeWebApiService
 {
@@ -51,14 +44,23 @@ namespace Pi4SmartHomeWebApiService
                         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
                         builder.Services.AddEndpointsApiExplorer();
                         builder.Services.AddSwaggerGen();
-                        
+
+                        builder.Services.AddRabbitMQConfiguration(builder.Configuration);
+
+                        builder.Services.AddMessageProducer<CloudToDeviceMessage>(
+                            getExchangeName: () =>
+                                builder.Configuration.GetSection("rabbitMQ:Configuration:Pi4SmartHomeDslExchangeName").Value!,
+                            getExchangeQueueRoutingKey: () =>
+                                builder.Configuration.GetSection("rabbitMQ:Configuration:Pi4SmartHomeDslQueueRoutingKey").Value!,
+                            getQueueName: () => builder.Configuration.GetSection("rabbitMQ:Configuration:Pi4SmartHomeDslQueueName").Value!);
+
                         var app = builder.Build();
                         
                         // Configure the HTTP request pipeline.
                         if (app.Environment.IsDevelopment())
                         {
-                        app.UseSwagger();
-                        app.UseSwaggerUI();
+                            app.UseSwagger();
+                            app.UseSwaggerUI();
                         }
                         
                         app.UseAuthorization();

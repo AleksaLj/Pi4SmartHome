@@ -18,4 +18,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pi4SmartHome.Core.RabbitMQ\Pi4SmartHome.Core.RabbitMQ.csproj" />
+  </ItemGroup>
+
 </Project>
