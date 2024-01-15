@@ -8,6 +8,7 @@ using Pi4SmartHome.Core.RabbitMQ.Common.Messages;
 using Pi4SmartHomeDSL.DSL.Common.Extensions;
 using Pi4SmartHomeDSL.Infrastructure.Common.Extensions;
 
+
 var app = App.BuildServices((services, config) =>
 {
     services.AddIoTHubConnection(config);
