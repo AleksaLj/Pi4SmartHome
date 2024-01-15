@@ -37,7 +37,7 @@ namespace Pi4SmartHomeDSL.Infrastructure.CloudToDeviceService
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e.Message);
                 throw;
             }
         }

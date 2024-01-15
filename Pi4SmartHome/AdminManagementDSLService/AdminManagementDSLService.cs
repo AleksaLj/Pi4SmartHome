@@ -32,7 +32,7 @@ namespace AdminManagementDSLService
 
         private IAdminManagementDSLService GetAdminManagementDSLService()
         {
-            _adminManagementDslService ??= Services.GetAdminManagementDSLService();
+            _adminManagementDslService = Services.GetAdminManagementDSLService();
 
             return _adminManagementDslService;
         }

@@ -19,5 +19,10 @@ namespace CloudToDevice.Service.Extensions
 
             return services;
         }
+
+        public static ICloudToDeviceService GetCloudToDeviceService(this IServiceProvider services)
+        {
+            return services.GetService<ICloudToDeviceService>()!;
+        }
     }
 }
