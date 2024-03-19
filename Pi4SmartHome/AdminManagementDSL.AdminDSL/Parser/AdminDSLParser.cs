@@ -26,7 +26,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
         //property_value: (a-zA-Z0-9\s)+ | (([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\"\(\[\]!#-[^-~ \t]|(\\[\t -~]))+\")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])) | NULL
         private static bool IsValidEmails(string? propertyValue = null)
         {
-            var emailRegex = new Regex(@"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
+            var emailRegex = new Regex(@"^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");
 
             if (propertyValue == null)
             {
@@ -70,27 +70,20 @@ namespace AdminManagementDSL.AdminDSL.Parser
         private AST PropertyAssignment()
         {
             var propertyNameToken = _scanner?.CurrentToken;
-            if (propertyNameToken == null || propertyNameToken.TokenValue == null)
+            if (propertyNameToken?.TokenValue == null)
             {
                 throw Error.ErrorMessages.EmptyPropertyNameErr();
             }
             SkipProcessedToken(TokenTypeEnum.PropertyKeyword);
 
             SkipProcessedToken(TokenTypeEnum.COLON);
-            var propertyTypeToken = _scanner?.CurrentToken;
-            if (propertyTypeToken == null)
-            { 
-                throw Error.ErrorMessages.EmptyPropertyTypeErr();
-            }
+            var propertyTypeToken = _scanner?.CurrentToken ?? throw Error.ErrorMessages.EmptyPropertyTypeErr();
+
             SkipProcessedToken(TokenTypeEnum.TypeKeyword);
 
             SkipProcessedToken(TokenTypeEnum.ASSIGN);
 
-            var propertyValueToken = _scanner?.CurrentToken;
-            if(propertyValueToken == null)
-            {
-                throw Error.ErrorMessages.EmptyPropertyValueErr();
-            }
+            var propertyValueToken = _scanner?.CurrentToken ?? throw Error.ErrorMessages.EmptyPropertyValueErr();
 
             var isPropertyValueValid = propertyNameToken.TokenValue.ToString() == ReservedKeywords.PropertyKeywords.Keyword_Users ?
                 IsValidEmails((string?)propertyValueToken.TokenValue) :
@@ -132,7 +125,7 @@ namespace AdminManagementDSL.AdminDSL.Parser
                 tablePropertiesNodes.Add(tableProperty);
             }
 
-            if (tablePropertiesNodes == null || tablePropertiesNodes.Count() == 0)
+            if (tablePropertiesNodes == null || !tablePropertiesNodes.Any())
             {
                 throw Error.ErrorMessages.EmptyTablePropertiesErr();
             }
@@ -145,11 +138,8 @@ namespace AdminManagementDSL.AdminDSL.Parser
         {
             SkipProcessedToken(TokenTypeEnum.AdminDSLKeyword, ReservedKeywords.AdminDSLKeywords.Keyword_Define);
 
-            var tableKeywordToken = _scanner?.CurrentToken;
-            if (tableKeywordToken == null)
-            {
-                throw Error.ErrorMessages.NullTableKeywordTokenErr();
-            }
+            var tableKeywordToken = _scanner?.CurrentToken ?? throw Error.ErrorMessages.NullTableKeywordTokenErr();
+            
             SkipProcessedToken(TokenTypeEnum.TableKeyword);
 
             SkipProcessedToken(TokenTypeEnum.COLON);

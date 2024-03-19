@@ -39,8 +39,8 @@ var consumerTest = new RabbitMQConsumerTest(app.Services.GetMessageConsumer<Admi
                                             interpreter!, 
                                             app.Services.GetService<ILogger<AdminManagementDSLMsgHandler>>()!,
                                             app.Services.GetMessageProducer<AdminDSLInterpreterEndMessage>()!);
-await consumerTest.ReceiveMessage();
+//await consumerTest.ReceiveMessage();
 
 
-//var adminDSLTest = new AdminDSLTest();
-//await adminDSLTest.TestAdminDSLExample(parser, interpreter);
+var adminDSLTest = new AdminDSLTest();
+await adminDSLTest.TestAdminDSLExample(parser, interpreter);

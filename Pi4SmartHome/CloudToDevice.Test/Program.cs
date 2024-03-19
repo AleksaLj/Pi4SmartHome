@@ -1,4 +1,5 @@
-﻿using CloudToDevice.Service.Extensions;
+﻿using System.Threading.Channels;
+using CloudToDevice.Service.Extensions;
 using CloudToDevice.Service.Implementations;
 using CloudToDevice.Test;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,17 @@ var app = App.BuildServices((services, config) =>
 });
 
 
+var test = new List<string>();
+var empStr = string.Empty;
+
+if (!string.IsNullOrWhiteSpace(empStr))
+{
+    test.Add(empStr);
+}
+
+Console.WriteLine(test.Count);
+
+
 
 var parser = app.Services.GetPi4SmartHomeDslParser();
 var interpreter = app.Services.GetPi4SmartHomeDslInterpreter();
@@ -43,5 +55,3 @@ var consumerTest = new RabbitMqConsumerTest(app.Services.GetMessageConsumer<Clou
                                       app.Services.GetService<ILogger<CloudToDeviceMessageHandler>>()!);
 
 await consumerTest.ReceiveMessage();
-
-

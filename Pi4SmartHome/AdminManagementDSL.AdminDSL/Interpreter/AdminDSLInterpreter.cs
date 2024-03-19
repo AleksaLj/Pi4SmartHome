@@ -1,8 +1,6 @@
 ﻿using AdminManagementDSL.AdminDSL.Common.Core;
 using AdminManagementDSL.AdminDSL.Common.Dto;
 using AdminManagementDSL.AdminDSL.Common.Interfaces;
-using Pi4SmartHome.Core.Helper;
-using System.Data;
 
 namespace AdminManagementDSL.AdminDSL.Interpreter
 {
